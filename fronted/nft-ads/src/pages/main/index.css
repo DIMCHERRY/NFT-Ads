@@ -1,0 +1,98 @@
+.App__Main {
+    height: 100%;
+    width: 100%;
+    background-image: url(../../assets/bg.jpeg) ;
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    z-index: -1;
+}
+
+.App__header {
+  display: flex;
+  height: 72px;
+  justify-content: space-between;
+}
+
+.App__header-menu,
+.App__header-menu-item {
+  display: flex;
+  align-items: center;
+  color: #4e5969;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.App__header-menu-about,
+.App__header-menu-started {
+  margin-left: 5px;
+}
+
+.App__header-menu-about {
+  border-right: 1px solid;
+  margin-right: 10px;
+  padding-right: 10px;
+}
+
+.App__header-menu {
+  margin-right: 80px;
+}
+
+.App__body {
+  padding: 120px 80px;
+}
+
+.App__body-logo-name,
+.App__body-start-to-drop {
+  width: 500px;
+}
+
+.App__body-logo-name {
+  font-size: 84px;
+  color: #5371fe;
+}
+
+.App__body-start-to-drop {
+  background-color: #5371fe;
+  border-radius: 40px;
+  color: #fff;
+  font-size: 64px;
+  height: 84px;
+  line-height: 84px;
+  margin: 32px 0;
+  text-align: center;
+}
+
+.App__body-description {
+  color: #5371fe;
+  margin-top: 32px;
+  font-size: 32px;
+  height: 48px;
+  line-height: 48px;
+}
+.App__body-advantages-title {
+  color: #5371fe;
+  font-size: 32px;
+  margin-bottom: 32px;
+}
+
+.App__body-advantages-content {
+  display: flex;
+  color: #4e5969;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 24px;
+}
+
+.App__body-advantages-content div {
+  flex: 1;
+  margin-right: 150px;
+}
+
+.App__body-advantages-content div:last-child {
+  margin-right: 0;
+}
