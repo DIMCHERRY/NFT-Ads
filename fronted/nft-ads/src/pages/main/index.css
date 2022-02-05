@@ -32,6 +32,11 @@
   margin-left: 5px;
 }
 
+.App__header-menu-disconnect {
+  display: flex;
+  flex-direction: column;
+}
+
 .App__header-menu-about {
   border-right: 1px solid;
   margin-right: 10px;
@@ -60,6 +65,7 @@
   background-color: #5371fe;
   border-radius: 40px;
   color: #fff;
+  cursor: pointer;
   font-size: 64px;
   height: 84px;
   line-height: 84px;

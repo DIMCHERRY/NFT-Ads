@@ -6,10 +6,12 @@ import AddIcon from "@material-ui/icons/Add";
 import './index.css';
 import logo from '../../assets/logo.png';
 import AboutModal from '../../components/AboutModal';
+import { handleAddress } from "../../util/util";
 
 function Main() {
     const [isAboutModalVisible, setIsAboutModalVisible] = useState(false);
     const [isStartModalVisible, setIsStartModalVisible] = useState(false);
+    const [accountAddress, setAccountAddress] = useState('');
 
     const clickAbout = () => {
         setIsAboutModalVisible(true);
@@ -26,13 +28,14 @@ function Main() {
           user = await Moralis.authenticate();
         }
 
-        console.log("logged in user:", user);
+        setAccountAddress(user.attributes.accounts[0]);
     }
 
-    const disConnectWallet = async() => {
+    const disconnectWallet = async() => {
         await Moralis.User.logOut();
 
-        console.log("logged out");
+        setAccountAddress('');
+        console.log(accountAddress);
     }
 
     return(
@@ -44,10 +47,20 @@ function Main() {
                         <ErrorOutlineIcon/>
                         <span className="App__header-menu-about">About</span>
                     </div>
-                    <div className="App__header-menu-item" onClick={connectWallet}>
-                        <AddIcon/>
-                        <span className="App__header-menu-started">connectWallet</span>
-                    </div>
+                    {
+                        accountAddress ?
+                        <div className="App__header-menu-item" onClick={disconnectWallet}>
+                            <div className="App__header-menu-disconnect">
+                                <span className="App__header-account-address">{handleAddress(accountAddress)}</span>
+                                <span className="App__header-menu-started">DisconnectWallet</span>
+                            </div>
+                        </div>
+                        : <div className="App__header-menu-item" onClick={connectWallet}>
+                            <AddIcon/>
+                            <span className="App__header-menu-started">connectWallet</span>
+                        </div>
+                    }
+                    
                 </div>
             </header>
             <div className="App__body">
