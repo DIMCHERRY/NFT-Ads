@@ -11,7 +11,7 @@ const baseConf = confManager.getBaseConf()
 const Port = baseConf.Port
 const Address = baseConf.Address
 
-app.use("/", tokenRoutes)
+app.use("/api", tokenRoutes)
 
 app.get('/', (_req, res) => {
     res.send('ok');
