@@ -1,6 +1,7 @@
 import { closeIcon } from "../../assets/icons";
 import './index.css';
 import logo from '../../assets/logo.png';
+import React from 'react';
 
 const data = {
     title: "About",
