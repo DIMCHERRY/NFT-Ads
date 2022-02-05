@@ -6,6 +6,7 @@ import AddIcon from "@material-ui/icons/Add";
 import './index.css';
 import logo from '../../assets/logo.png';
 import AboutModal from '../../components/AboutModal';
+import StartModal from '../../components/StartModal';
 import { handleAddress } from "../../util/util";
 
 function Main() {
@@ -29,13 +30,26 @@ function Main() {
         }
 
         setAccountAddress(user.attributes.accounts[0]);
+
+        localStorage.setItem('accountAddress', user.attributes.accounts[0]);
     }
 
     const disconnectWallet = async() => {
         await Moralis.User.logOut();
 
         setAccountAddress('');
+
+        localStorage.removeItem('accountAddress');
+
         console.log(accountAddress);
+    }
+
+    const clickStartToDrop = () => {
+        setIsStartModalVisible(true);
+    }
+
+    const handleStartModalClose = () => {
+        setIsStartModalVisible(false);
     }
 
     return(
@@ -65,13 +79,13 @@ function Main() {
             </header>
             <div className="App__body">
                 <div className="App__body-logo-name">
-                NFT ADS
+                    NFT ADS
                 </div>
                 <div className="App__body-description">
-                NFT Ads is an AD delivery tool for Web3.0 users.
+                    NFT Ads is an AD delivery tool for Web3.0 users.
                 </div>
-                <div className="App__body-start-to-drop">
-                Start to drop
+                <div className="App__body-start-to-drop" onClick={clickStartToDrop}>
+                    Start to drop
                 </div>
                 <div className="App__body-advantages">
                 <div className="App__body-advantages-title">
@@ -79,13 +93,13 @@ function Main() {
                 </div>
                 <div className="App__body-advantages-content">
                     <div>
-                    Compared with other online advertisement injecting, lower price is the advantages include service fees and gas fee. 
+                        Compared with other online advertisement injecting, lower price is the advantages include service fees and gas fee. 
                     </div>
                     <div>
-                    Each wallet address is open and transparent for every visitors. 
+                        Each wallet address is open and transparent for every visitors. 
                     </div>
                     <div>
-                    Some people will monitor or track Whales investment orientation of NFTs. Good advertisement will become consumption as a part of your NFTs.
+                        Some people will monitor or track Whales investment orientation of NFTs. Good advertisement will become consumption as a part of your NFTs.
                     </div>
                 </div>
                 </div>
@@ -93,6 +107,10 @@ function Main() {
             <AboutModal 
                 isModalVisible={isAboutModalVisible}
                 handleClose={handleAboutModalClose}
+            />
+            <StartModal 
+                isModalVisible={isStartModalVisible}
+                handleClose={handleStartModalClose}
             />
         </div>
     )
