@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Moralis from 'moralis';
 
 import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import AddIcon from "@material-ui/icons/Add";
@@ -18,16 +19,28 @@ function Main() {
         setIsAboutModalVisible(false);
     }
     
-    const connectWallet = () => {
-        setIsStartModalVisible(true);
+    const connectWallet = async() => {
+        let user = Moralis.User.current();
+
+        if (!user) {
+          user = await Moralis.authenticate();
+        }
+
+        console.log("logged in user:", user);
+    }
+
+    const disConnectWallet = async() => {
+        await Moralis.User.logOut();
+
+        console.log("logged out");
     }
 
     return(
         <div className="App__Main">
             <header className="App__header">
                 <img src={logo} className="App-logo" alt="logo" />
-                <div className="App__header-menu" onClick={clickAbout}>
-                    <div className="App__header-menu-item">
+                <div className="App__header-menu">
+                    <div className="App__header-menu-item" onClick={clickAbout}>
                         <ErrorOutlineIcon/>
                         <span className="App__header-menu-about">About</span>
                     </div>
