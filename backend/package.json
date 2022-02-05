@@ -4,6 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "pm2 start index.js",
+    "run": "pm2 start index.js --no-daemon",
+    "status": "pm2 monit",
+    "stop": "pm2 stop all",
+    "logs": "pm2 logs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
