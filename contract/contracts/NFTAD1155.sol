@@ -45,7 +45,7 @@ contract NFTAD1155 is ERC1155, Ownable{
         emit Minted(msg.sender, account, id, amount);
     }
 
-    function mintToMany(address[] calldata accounts, uint256 id, uint256 amount) external returns (uint mintedQty) {
+    function mintToMany(address[] calldata accounts, uint256 id, uint256 amount) external payable returns (uint mintedQty) {
         if (adOwners[id] == address(0)) {
             refundIfOver(PRICE, amount);
             adOwners[id] = msg.sender;
