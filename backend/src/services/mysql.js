@@ -66,6 +66,16 @@ class Mysql {
         return rows[0].id;
     }
 
+    async queryTokenByIMGURLAsync(img_ipfs_url) {
+        let [rows, fields] = await this.connection.promise().query('SELECT id, img_ipfs_url FROM t_tokens where img_ipfs_url = ?', [img_ipfs_url]);
+        if (rows.length == 0) {
+            console.log("query returns none");
+            return 0;
+        }
+        console.log(rows[0])
+        return rows[0].id;
+    }
+
     queryTokenByAddress(_address, callback) {
         this.connection.query('SELECT id, img_ipfs_url FROM t_tokens where creator_address = ?', [_address], function (err, rows, fields) {
             if (err) throw err

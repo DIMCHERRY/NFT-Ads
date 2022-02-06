@@ -113,6 +113,12 @@ router.post('/tokens/', async (req, res) => {
     let resp = {}
     try {
         mysqlConn.insertOneToken(image_url, address, default_description);
+        let id = await mysqlConn.queryTokenByIMGURLAsync(image_url);
+        res.status(200).json({
+            errorCode: 0,
+            errorMsg: 'success',
+            data: {id:id}
+        })
     } catch(e) {
         console.log(e.message)
         res.status(502).json({
@@ -122,11 +128,6 @@ router.post('/tokens/', async (req, res) => {
         })
         return;
     }
-    res.status(200).json({
-        errorCode: 0,
-        errorMsg: 'success',
-        data: resp
-    })
 })
 
 module.exports = router
