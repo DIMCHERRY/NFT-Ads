@@ -1,4 +1,4 @@
 module.exports = [
   "NFTAD",
-  "https://nftads.info/token/{id}",
+  "https://nftads.info/api/tokens/{id}",
 ];
