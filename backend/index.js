@@ -6,6 +6,9 @@ const confManager = require('./src/confManager.js')
 const app = express()
 app.use(bodyParser.json({limit: '1mb'}))
 app.use(express.json());
+// ADD THIS
+var cors = require('cors');
+app.use(cors());
 
 const baseConf = confManager.getBaseConf()
 const Port = baseConf.Port

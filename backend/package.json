@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start index.js",
+    "start": "pm2 start index.js --no-pmx",
     "run": "pm2 start index.js --no-daemon",
     "status": "pm2 monit",
     "stop": "pm2 stop all",
@@ -14,6 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.2",
     "mongodb": "^4.3.1",
     "mysql": "^2.18.1",
