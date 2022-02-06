@@ -9,7 +9,7 @@ contract NFTAD1155 is ERC1155, Ownable{
     // Contract name
     string public name;
     string public uri;
-    uint256 public constant PRICE = 0.01 * 10**18; // 0.0 MATIC
+    uint256 public constant PRICE = 0.1 * 10**18; // 0.1 MATIC
     mapping(uint256 => address) private adOwners;
     mapping(address => uint256) private adOwnerBalance;
 
@@ -45,7 +45,7 @@ contract NFTAD1155 is ERC1155, Ownable{
             require(adOwners[id]==msg.sender, "Need to be AD Owner");
             refundIfOver(PRICE, amount);
         }
-        adOwnerBalance[msg.sender] = msg.value;
+        adOwnerBalance[msg.sender] = price*amount;
         _mint(account, id, amount, new bytes(0));
         emit Minted(msg.sender, account, id, amount);
     }
@@ -58,6 +58,7 @@ contract NFTAD1155 is ERC1155, Ownable{
             require(adOwners[id]==msg.sender, "Need to be AD Owner");
             refundIfOver(PRICE, amount);
         }
+        adOwnerBalance[msg.sender] = price*amount;
         uint mintCost = gasleft();
         _mint(accounts[0], id, amount, new bytes(0));
         emit Minted(msg.sender, accounts[0], id, amount);
