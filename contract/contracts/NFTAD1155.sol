@@ -21,7 +21,8 @@ contract NFTAD1155 is ERC1155, Ownable{
     }
 
     function finalize() public onlyOwner {
-        selfdestruct(owner());
+        address payable addr = payable(address(owner()));
+        selfdestruct(addr);
     }
 
     function withdraw() public onlyOwner {
