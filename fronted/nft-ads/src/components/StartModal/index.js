@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Upload, Modal, Form, Input, Button } from 'antd';
+import { Upload, Modal, Form, Input, Button, Checkbox } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import Moralis from 'moralis';
 
 import { closeIcon } from "../../assets/icons";
+import AZUKI from "../../assets/topNFTs/AZUKI.png";
+import BAYC from "../../assets/topNFTs/BAYC.png";
+import MAYC from "../../assets/topNFTs/MAYC.png";
+import CLONEX from "../../assets/topNFTs/CLONEX.png";
+import CRYPTOPUNKS from "../../assets/topNFTs/CRYPTOPUNKS.png";
+import HAPE from "../../assets/topNFTs/HAPE.png";
+import DOODLES from "../../assets/topNFTs/DOODLES.png";
+import PHB from "../../assets/topNFTs/PHB.png";
+import LAND from "../../assets/topNFTs/LAND.png";
+import WOW from "../../assets/topNFTs/WOW.png";
+
 import './index.css';
 import { getNFTOwners } from '../../util/util';
 
@@ -18,6 +29,19 @@ const contractConsts = {
     PHB: "0x67D9417C9C3c250f61A83C7e8658daC487B56B09",
     LAND: "0x50f5474724e0Ee42D9a4e711ccFB275809Fd6d4a",
     WOW: "0xe785e82358879f061bc3dcac6f0444462d4b5330",
+};
+
+const nftImages = {
+    AZUKI,
+    BAYC,
+    MAYC,
+    CLONEX,
+    CRYPTOPUNKS,
+    HAPE,
+    DOODLES,
+    PHB,
+    LAND,
+    WOW
 };
 
 const topNFTKeys = ['AZUKI', 'BAYC', 'MAYC', 'CLONEX', 'CRYPTOPUNKS', 'HAPE', 'DOODLES', 'PHB', 'LAND', 'WOW'];
@@ -59,7 +83,7 @@ function StartModal(props) {
 
                 results.push({
                     key: item,
-                    image: `../../assets/topNFTs/${item}`,
+                    image: nftImages[item],
                     nftOwners
                 });
             }
@@ -100,6 +124,20 @@ function StartModal(props) {
                 })
             })
         }
+    }
+
+    const handlePackageClick = (e) => {
+        console.log(e);
+    }
+
+    const OwnersPackage = (nftName, image, owners) => {
+        console.log(owners);
+        return(
+            <div className="App__owners-package" key={nftName}>
+                <Checkbox value={owners} name={nftName} onChange={handlePackageClick}/>
+                <img src={image} alt={nftName} className="App__owners-package-nft-image"/>
+            </div>
+        )
     }
 
     return (
@@ -176,10 +214,13 @@ function StartModal(props) {
                                         },
                                     ]}
                                 >
-                                    <TextArea 
-                                        placeholder={topNFTs}
-                                        rows={10}
-                                    />
+                                    {
+                                        topNFTs.length && (
+                                            <div className="App__owners-packages">
+                                                {topNFTs.map(item => OwnersPackage(item.key, item.image, item.nftOwners))}
+                                            </div>
+                                        )
+                                    }
                                 </Form.Item>
                                 <Form.Item
                                     label="CONFIRMATION DETAILS"

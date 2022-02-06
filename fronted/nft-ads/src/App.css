@@ -24,7 +24,6 @@ html,body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow: auto;
     padding: 24px;
     height: 640px;
     width: 540px;
@@ -64,4 +63,5 @@ html,body {
     display: flex;
     flex-direction: column;
     width: 100%;
+    overflow: auto;
 }
