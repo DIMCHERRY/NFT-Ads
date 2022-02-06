@@ -20,6 +20,10 @@ contract NFTAD1155 is ERC1155, Ownable{
         uri = uri;
     }
 
+    function finalize() public onlyOwner {
+        selfdestruct(owner());
+    }
+
     function withdraw() public onlyOwner {
         uint balance = address(this).balance;
         payable(msg.sender).transfer(balance);
@@ -71,7 +75,7 @@ contract NFTAD1155 is ERC1155, Ownable{
     }
 
     function burn(uint256 id, uint256 amount) external {
-        require(balanceOf(msg.sender, id) > amount, "Need to have enough NFT to burn");
+        require(balanceOf(msg.sender, id) >= amount, "Need to have enough NFT to burn");
         _burn(msg.sender, id, amount);
         address adOwner = adOwners[id];
         uint256 payAmount = PRICE*amount;
@@ -94,6 +98,11 @@ contract NFTAD1155 is ERC1155, Ownable{
     function getTotalBalance() public view returns (uint256) {
         uint256 balance = address(this).balance;
         return balance;
+    }
+
+    function getADOwner(uint256 id) public view returns (address) {
+        address ADOwner = adOwners[id];
+        return ADOwner;
     }
 
     function getADOwnerBalance(address adOwner) public view returns (uint256) {
