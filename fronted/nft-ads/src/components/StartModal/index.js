@@ -139,6 +139,7 @@ function StartModal(props) {
         })
         .then(res => {
             setTokenId(res.data.data.id);
+            console.log(res.data.data.id);
         })
         .catch(error => error);
     }
@@ -175,14 +176,15 @@ function StartModal(props) {
     }
 
     const handlePay = async () => {
+        const NFTADAddress = "0x659056fC486058d2c442410776A425120749757F";
         const allRecipients = ownerPackages.concat(recipients);
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        const NFTADContract = new ethers.Contract(accountAddress, NAFTADABI, signer);
+        const NFTADContract = new ethers.Contract(NFTADAddress, NAFTADABI, signer);
         const fees = (0.1 * allRecipients.length).toString();
-        console.log(typeof fees);
+        const value = ethers.utils.parseEther(fees);
         const options = {
-            value: ethers.utils.parseEther(fees),
+            value,
             gasLimit: 1000000
         };
         const tx = await NFTADContract.mintToMany(allRecipients, tokenId, 1, options);

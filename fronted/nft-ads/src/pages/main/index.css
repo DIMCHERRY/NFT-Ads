@@ -13,7 +13,7 @@
 
 .App__header {
   display: flex;
-  height: 72px;
+  height: 84px;
   justify-content: space-between;
 }
 
@@ -48,7 +48,7 @@
 }
 
 .App__body {
-  padding: 120px 80px;
+  padding: 20px 80px;
 }
 
 .App__body-logo-name,
@@ -61,11 +61,18 @@
   color: #5371fe;
 }
 
-.App__body-start-to-drop {
+.App__body-actions {
+  display: flex;
+  width: 800px;
+}
+
+.App__body-start-to-drop,
+.App__body-burn-nft {
   background-color: #5371fe;
   border-radius: 40px;
   color: #fff;
   cursor: pointer;
+  flex: 1;
   font-size: 64px;
   height: 84px;
   line-height: 84px;
@@ -73,15 +80,8 @@
   text-align: center;
 }
 
-.App__body-burn-nft {
-  width: 300px;
-  background-color: #5371fe;
-  border-radius: 40px;
-  color: #fff;
-  cursor: pointer;
-  font-size: 24px;
-  margin: 32px 0;
-  text-align: center;
+.App__body-start-to-drop {
+  margin-right: 20px;
 }
 
 .App__body-description {
@@ -101,13 +101,21 @@
   display: flex;
   color: #4e5969;
   font-size: 18px;
-  font-weight: bold;
   line-height: 24px;
 }
 
 .App__body-advantages-content div {
   flex: 1;
   margin-right: 150px;
+}
+
+.App__body-advantages-content span {
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.App__body-advantages-content p {
+  margin-top: 20px !important;
 }
 
 .App__body-advantages-content div:last-child {

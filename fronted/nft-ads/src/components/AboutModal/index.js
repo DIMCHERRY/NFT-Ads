@@ -5,7 +5,7 @@ import React from 'react';
 
 const data = {
     title: "About",
-    description: "NFT Ads is an AD delivery tool for Web3.0 users, including individuals, DAOs and other crypto teams.The dapp was inspired by the ideas and creations of projects like Polygon, Moralis and many more. 🙏"
+    description: "NFT Ads is an AD delivery tool for Web3 users, including individuals, DAOs and other crypto teams.The dApp was inspired by the ideas and creations of projects like Polygon, Moralis and many more. Thanks for using NFT Ads! 🙏"
 }
 
 function AboutModal (props) {
