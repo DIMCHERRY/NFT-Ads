@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Moralis from 'moralis';
 
-import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
-import AddIcon from "@material-ui/icons/Add";
 import './index.css';
 import logo from '../../assets/logo.png';
 import AboutModal from '../../components/AboutModal';
 import StartModal from '../../components/StartModal';
+import BurnModal from  '../../components/BurnModal';
 import { handleAddress } from "../../util/util";
 
 function Main() {
+    const [isBurnModalVisible, setIsBurnModalVisible] = useState(false);
     const [isAboutModalVisible, setIsAboutModalVisible] = useState(false);
     const [isStartModalVisible, setIsStartModalVisible] = useState(false);
     const [accountAddress, setAccountAddress] = useState('');
@@ -48,8 +48,16 @@ function Main() {
         setIsStartModalVisible(true);
     }
 
+    const clickToBurn = () => {
+        setIsBurnModalVisible(true);
+    }
+
     const handleStartModalClose = () => {
         setIsStartModalVisible(false);
+    }
+
+    const handleBurnModalClose = () => {
+        setIsBurnModalVisible(false);
     }
 
     return(
@@ -58,7 +66,6 @@ function Main() {
                 <img src={logo} className="App-logo" alt="logo" />
                 <div className="App__header-menu">
                     <div className="App__header-menu-item" onClick={clickAbout}>
-                        <ErrorOutlineIcon/>
                         <span className="App__header-menu-about">About</span>
                     </div>
                     {
@@ -70,7 +77,6 @@ function Main() {
                             </div>
                         </div>
                         : <div className="App__header-menu-item" onClick={connectWallet}>
-                            <AddIcon/>
                             <span className="App__header-menu-started">connectWallet</span>
                         </div>
                     }
@@ -85,7 +91,10 @@ function Main() {
                     NFT Ads is an AD delivery tool for Web3.0 users.
                 </div>
                 <div className="App__body-start-to-drop" onClick={clickStartToDrop}>
-                    Start to drop
+                    Start to airdrop ads
+                </div>
+                <div className="App__body-burn-nft" onClick={clickToBurn}>
+                    Burn NFTs' award
                 </div>
                 <div className="App__body-advantages">
                 <div className="App__body-advantages-title">
@@ -111,6 +120,10 @@ function Main() {
             <StartModal 
                 isModalVisible={isStartModalVisible}
                 handleClose={handleStartModalClose}
+            />
+            <BurnModal
+                isModalVisible={isBurnModalVisible}
+                handleClose={handleBurnModalClose}
             />
         </div>
     )
