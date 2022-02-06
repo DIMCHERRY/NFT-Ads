@@ -53,7 +53,7 @@
 
 .App__body-logo-name,
 .App__body-start-to-drop {
-  width: 500px;
+  width: 600px;
 }
 
 .App__body-logo-name {
@@ -69,6 +69,17 @@
   font-size: 64px;
   height: 84px;
   line-height: 84px;
+  margin: 32px 0;
+  text-align: center;
+}
+
+.App__body-burn-nft {
+  width: 300px;
+  background-color: #5371fe;
+  border-radius: 40px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 24px;
   margin: 32px 0;
   text-align: center;
 }
