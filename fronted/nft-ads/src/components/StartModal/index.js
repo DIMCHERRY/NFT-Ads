@@ -3,9 +3,23 @@ import { Upload, Modal, Form, Input, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
 import { closeIcon } from "../../assets/icons";
-import { handleAddress } from "../../util/util";
 import './index.css';
 import Moralis from 'moralis';
+
+const contractConsts = {
+    AZUKI: "0xed5af388653567af2f388e6224dc7c4b3241c544",
+    BAYC: "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d",
+    MAYC:"0x60e4d786628fea6478f785a6d7e704777c86a7c6",
+    CLONEX: "0x49cF6f5d44E70224e2E23fDcdd2C053F30aDA28B",
+    CRYPTOPUNKS: "0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb",
+    HAPE: "0x4Db1f25D3d98600140dfc18dEb7515Be5Bd293Af",
+    DOODLES: "0x8a90CAb2b38dba80c64b7734e58Ee1dB38B8992e",
+    PHB: "0x67D9417C9C3c250f61A83C7e8658daC487B56B09",
+    LAND: "0x50f5474724e0Ee42D9a4e711ccFB275809Fd6d4a",
+    WOW: "0xe785e82358879f061bc3dcac6f0444462d4b5330",
+};
+
+const topNFTKeys = ['AZUKI', 'BAYC', 'MAYC', 'CLONEX', 'CRYPTOPUNKS', 'HAPE', 'DOODLES', 'PHB', 'LAND', 'WOW'];
 
 function getBase64(file) {
     return new Promise((resolve, reject) => {
@@ -33,6 +47,19 @@ function StartModal(props) {
     const [fileList, setFileList] = useState([]);
     const { TextArea } = Input;
     const accountAddress = localStorage.getItem('accountAddress');
+    const [topNFTs, setTopNFTs] = useState([]);
+
+    useEffect(() => {
+        if (accountAddress) {
+          setTopNFTs(
+            topNFTKeys.map(item => ({
+                key: item,
+                image: `../../assets/topNFTs/${item}`,
+                nftOwners: Moralis.Web3API.token.getNFTOwners({address: contractConsts[item], chain: 'matic'})
+            }))
+          );
+        }
+      }, [accountAddress]);
 
     const handleCancel = () => {
         setPreviewVisible(false);

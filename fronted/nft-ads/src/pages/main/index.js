@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Moralis from 'moralis';
 
-import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
-import AddIcon from "@material-ui/icons/Add";
 import './index.css';
 import logo from '../../assets/logo.png';
 import AboutModal from '../../components/AboutModal';
@@ -68,7 +66,6 @@ function Main() {
                 <img src={logo} className="App-logo" alt="logo" />
                 <div className="App__header-menu">
                     <div className="App__header-menu-item" onClick={clickAbout}>
-                        <ErrorOutlineIcon/>
                         <span className="App__header-menu-about">About</span>
                     </div>
                     {
@@ -80,7 +77,6 @@ function Main() {
                             </div>
                         </div>
                         : <div className="App__header-menu-item" onClick={connectWallet}>
-                            <AddIcon/>
                             <span className="App__header-menu-started">connectWallet</span>
                         </div>
                     }
