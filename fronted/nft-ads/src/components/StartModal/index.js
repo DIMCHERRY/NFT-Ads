@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Upload, Modal, Form, Input, Button, Checkbox } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import Moralis from 'moralis';
+import axios from 'axios';
+import { ethers } from "ethers";
+import NAFTADABI from "../../abi/NFTAD.json"
 
 import { closeIcon } from "../../assets/icons";
 import AZUKI from "../../assets/topNFTs/AZUKI.png";
@@ -73,6 +76,9 @@ function StartModal(props) {
     const { TextArea } = Input;
     const accountAddress = localStorage.getItem('accountAddress');
     const [topNFTs, setTopNFTs] = useState([]);
+    const [tokenId, setTokenId] = useState('');
+    const [ownerPackages, setOwnerPackages] = useState([]);
+    const [recipients, setRecipients] = useState([]);
 
     useEffect(() => {
         (async() => {
@@ -109,7 +115,6 @@ function StartModal(props) {
 
     const handleChange = ({ fileList }) => {
         setFileList(fileList);
-        console.log(fileList);
         getIpfs();
     };
 
@@ -120,26 +125,70 @@ function StartModal(props) {
                 const file = new Moralis.File(fileList[0].name, { base64: ba64 });
 
                 file.saveIPFS().then(hash => {
-                    console.log("file is " + file.ipfs(), file.hash(), fileList[0].name)
+                    handleUpload(file.ipfs());
                 })
             })
         }
     }
 
-    const handlePackageClick = (e) => {
-        console.log(e);
+    const handleUpload = (imageUrl) => {
+        const uploadUrl = "https://nftads.info/api/tokens/";
+
+        axios.post(uploadUrl, {
+            "image_url": imageUrl
+        })
+        .then(res => {
+            setTokenId(res.data.data.id);
+        })
+        .catch(error => error);
     }
 
     const OwnersPackage = (nftName, image, owners) => {
-        console.log(owners);
         return(
             <div className="App__owners-package" key={nftName}>
-                <Checkbox value={owners} name={nftName} onChange={handlePackageClick}/>
+                <Checkbox value={owners.join(',')} name={nftName} onChange={handlePackageChange}/>
                 <img src={image} alt={nftName} className="App__owners-package-nft-image"/>
             </div>
         )
     }
 
+    const handlePackageChange = (e) => {
+        const value = e.target.value.split(',');
+
+        let newPackages;
+
+        if(e.target.checked) {
+            newPackages = ownerPackages.concat(value);
+
+            setOwnerPackages(newPackages);
+        } else {
+            newPackages = ownerPackages.filter(item => item !== value);
+            
+            setOwnerPackages(newPackages);
+        }
+    }
+
+    const handleTextAreaChange = (e) => {
+        const guests = e.target.value.split('\n');
+
+        setRecipients(Array.from(new Set(guests)));
+    }
+
+    const handlePay = async () => {
+        const allRecipients = ownerPackages.concat(recipients);
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const NFTADContract = new ethers.Contract(accountAddress, NAFTADABI, signer);
+        const fees = (0.1 * allRecipients.length).toString();
+        console.log(typeof fees);
+        const options = {
+            value: ethers.utils.parseEther(fees),
+            gasLimit: 1000000
+        };
+        const tx = await NFTADContract.mintToMany(allRecipients, tokenId, 1, options);
+
+        console.log(tx);
+    }
     return (
         <div className="App__modal App__about-modal-wrapper" data-visible={props.isModalVisible}>
             {
@@ -203,6 +252,7 @@ function StartModal(props) {
 0xEA674fdDe714fd979de3EdF0F56AA9716B898ec8
 ...`}
                                         rows={10}
+                                        onChange={handleTextAreaChange}
                                     />
                                 </Form.Item>
                                 <Form.Item
@@ -225,10 +275,10 @@ function StartModal(props) {
                                 <Form.Item
                                     label="CONFIRMATION DETAILS"
                                 >
-                                    TOTAL 0.0000（To do）
+                                    0.1Matic/Per
                                 </Form.Item>
                                 <Form.Item>
-                                    <Button type="primary" htmlType="submit">Pay</Button>
+                                    <Button type="primary" htmlType="submit" onClick={handlePay}>Pay</Button>
                                 </Form.Item>
                             </Form>
                         </div>
