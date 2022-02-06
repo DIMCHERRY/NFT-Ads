@@ -189,7 +189,8 @@ function StartModal(props) {
         };
         const tx = await NFTADContract.mintToMany(allRecipients, tokenId, 1, options);
 
-        console.log(tx);
+        alert('Success!');
+        handleClose();
     }
     return (
         <div className="App__modal App__about-modal-wrapper" data-visible={props.isModalVisible}>

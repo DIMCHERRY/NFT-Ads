@@ -12,39 +12,17 @@ function BurnModal (props) {
     const clickConfirm = async () => {
         try {
             const NFTADAddress = "0x659056fC486058d2c442410776A425120749757F";
-            // Moralis.start();
-            // const web3Provider = await Moralis.enableWeb3();
-            // // const ethers = Moralis.web3Library;
-            
-            // const sendOptions = {
-            //     contractAddress: NFTADAddress,
-            //     functionName: "mint",
-            //     abi: NAFTADABI,
-            //     params: {
-            //       address: "0x26a4eEA2a74cd06E978552579416faF9B9b97ABF",
-            //       id: 1,
-            //       amount:1,
-            //     },
-            //   };
-              
-            // const transaction = await Moralis.executeFunction(sendOptions);
-            // console.log(transaction.hash)
-            
-            // //Wait until the transaction is confirmed
-            // await transaction.wait();
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
             
             const NFTADContract = new ethers.Contract(NFTADAddress, NAFTADABI, signer);
-            const name = await NFTADContract.name()
-            console.log(name)
             const options = {
-                value: ethers.utils.parseEther("0.1"),
                 gasLimit: 1000000
             }
-            //const tx = await NFTADContract.mint("0x26a4eEA2a74cd06E978552579416faF9B9b97ABF", 1, 1);
-            const tx = await NFTADContract.mint("0x26a4eEA2a74cd06E978552579416faF9B9b97ABF", 1, 1, options);
-            console.log(tx);
+            const tx = await NFTADContract.burn(1, 1, options);
+
+            alert('Success!');
+            handleClose();
             await tx.wait();
           } catch (error) {
             console.error(error);
