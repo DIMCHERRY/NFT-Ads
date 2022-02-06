@@ -1,6 +1,6 @@
 import { closeIcon } from "../../assets/icons";
 import './index.css';
-import { Upload, Modal, Form, Input, Button } from 'antd';
+import { Button } from 'antd';
 import React from 'react';
 
 function AboutModal (props) {
@@ -24,7 +24,7 @@ function AboutModal (props) {
 
     return (
         <div className="App__modal App__about-modal-wrapper" data-visible={props.isModalVisible}>
-            <div className="App__modal-content">
+            <div className="App__modal-content App__burn-modal">
                 <div className="App__modal-title">
                     <span>Gain awards</span>
                     <span className="App__modal-close" onClick={handleClose}>
@@ -32,9 +32,14 @@ function AboutModal (props) {
                     </span>
                 </div>
                 <div className="App__modal-body">
-                    <p>please input your ETH Global stake transaction hash below</p>
-                    <input type="text" placeholder="input transaction hash"/>
-                    <Button type="primary" htmlType="submit" onClick={clickConfirm}>confirm</Button>
+                    <p className="App__burn-modal-description">please input your ETH Global stake transaction hash below</p>
+                    <input type="text" className="App__burn-modal-input" placeholder="input transaction hash"/>
+                    <Button 
+                        type="primary"
+                        htmlType="submit"
+                        onClick={clickConfirm}
+                        className="App__burn-modal-confirm"
+                    >confirm</Button>
                 </div>
             </div>
         </div>
