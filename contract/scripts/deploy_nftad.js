@@ -15,7 +15,7 @@ async function main() {
 
   // We get the contract to deploy
   const NFTAD = await hre.ethers.getContractFactory("NFTAD1155");
-  const nft_ad = await NFTAD.deploy("NFTAD", "https://nftads.info/token/{id}");
+  const nft_ad = await NFTAD.deploy("NFTAD", "https://nftads.info/api/tokens/{id}");
 
   await nft_ad.deployed();
 
