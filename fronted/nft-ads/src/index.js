@@ -6,11 +6,12 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { MoralisProvider } from "react-moralis";
+import Moralis from "moralis";
 
 const SERVER_URL = "https://hhltxx40gmhl.usemoralis.com:2053/server";
 const APP_ID = "E0uod8AJfsetWFHYNpkNM0DoOEQGqgMoYXcwgl7e";
 
-Moralis.start({ SERVER_URL, APP_ID });
+Moralis.start({ serverUrl: SERVER_URL, appId: APP_ID });
 
 ReactDOM.render(
   <MoralisProvider appId={APP_ID} serverUrl={SERVER_URL}>
