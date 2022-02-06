@@ -45,7 +45,7 @@ contract NFTAD1155 is ERC1155, Ownable{
             require(adOwners[id]==msg.sender, "Need to be AD Owner");
             refundIfOver(PRICE, amount);
         }
-        adOwnerBalance[msg.sender] = price*amount;
+        adOwnerBalance[msg.sender] = PRICE*amount;
         _mint(account, id, amount, new bytes(0));
         emit Minted(msg.sender, account, id, amount);
     }
@@ -58,7 +58,7 @@ contract NFTAD1155 is ERC1155, Ownable{
             require(adOwners[id]==msg.sender, "Need to be AD Owner");
             refundIfOver(PRICE, amount);
         }
-        adOwnerBalance[msg.sender] = price*amount;
+        adOwnerBalance[msg.sender] = PRICE*amount;
         uint mintCost = gasleft();
         _mint(accounts[0], id, amount, new bytes(0));
         emit Minted(msg.sender, accounts[0], id, amount);
