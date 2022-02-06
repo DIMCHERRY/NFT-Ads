@@ -5,6 +5,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { closeIcon } from "../../assets/icons";
 import { handleAddress } from "../../util/util";
 import './index.css';
+import Moralis from 'moralis';
 
 function getBase64(file) {
     return new Promise((resolve, reject) => {
@@ -50,7 +51,37 @@ function StartModal(props) {
     const handleChange = ({ fileList }) => {
         setFileList(fileList);
         console.log(fileList);
+        getIpfs()
     };
+
+    const getIpfs = async () => {
+        // Save file input to IPFS
+        if (fileList.length > 0) {
+            getBase64(fileList[0].originFileObj).then(ba64 => {
+                const file = new Moralis.File(fileList[0].name, { base64: ba64 })
+                file.saveIPFS().then(hash => {
+                    console.log("file is " + file.ipfs(), file.hash(), fileList[0].name)
+                })
+            })
+        }
+
+
+            // // Save file reference to Moralis
+            // const jobApplication = new Moralis.Object('Applications')
+            // jobApplication.set('name', 'Satoshi')
+            // jobApplication.set('resume', file)
+            // await jobApplication.save()
+
+            // // Retrieve file
+            // const query = new Moralis.Query('Applications')
+            // query.equalTo('name', 'Satoshi')
+            // query.find().then(function ([application]) {
+            //     const ipfs = application.get('resume').ipfs()
+            //     const hash = application.get('resume').hash()
+            //     console.log('IPFS url', ipfs)
+            //     console.log('IPFS hash', hash)
+            // })
+    }
 
     return (
         <div className="App__modal App__about-modal-wrapper" data-visible={props.isModalVisible}>
