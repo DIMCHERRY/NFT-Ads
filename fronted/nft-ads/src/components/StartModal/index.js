@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Upload, Modal, Form, Input, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import Moralis from 'moralis';
 
 import { closeIcon } from "../../assets/icons";
 import './index.css';
-import Moralis from 'moralis';
+import { getNFTOwners } from '../../util/util';
 
 const contractConsts = {
     AZUKI: "0xed5af388653567af2f388e6224dc7c4b3241c544",
@@ -50,16 +51,23 @@ function StartModal(props) {
     const [topNFTs, setTopNFTs] = useState([]);
 
     useEffect(() => {
-        if (accountAddress) {
-          setTopNFTs(
-            topNFTKeys.map(item => ({
-                key: item,
-                image: `../../assets/topNFTs/${item}`,
-                nftOwners: Moralis.Web3API.token.getNFTOwners({address: contractConsts[item], chain: 'matic'})
-            }))
-          );
-        }
-      }, [accountAddress]);
+        (async() => {
+            const results = [];
+
+            for (let item of topNFTKeys) {
+                const nftOwners = await getNFTOwners(contractConsts[item]);
+
+                results.push({
+                    key: item,
+                    image: `../../assets/topNFTs/${item}`,
+                    nftOwners
+                });
+            }
+
+            setTopNFTs(results);
+        })();
+    }, []);
+    
 
     const handleCancel = () => {
         setPreviewVisible(false);
@@ -78,36 +86,20 @@ function StartModal(props) {
     const handleChange = ({ fileList }) => {
         setFileList(fileList);
         console.log(fileList);
-        getIpfs()
+        getIpfs();
     };
 
     const getIpfs = async () => {
         // Save file input to IPFS
         if (fileList.length > 0) {
             getBase64(fileList[0].originFileObj).then(ba64 => {
-                const file = new Moralis.File(fileList[0].name, { base64: ba64 })
+                const file = new Moralis.File(fileList[0].name, { base64: ba64 });
+
                 file.saveIPFS().then(hash => {
                     console.log("file is " + file.ipfs(), file.hash(), fileList[0].name)
                 })
             })
         }
-
-
-            // // Save file reference to Moralis
-            // const jobApplication = new Moralis.Object('Applications')
-            // jobApplication.set('name', 'Satoshi')
-            // jobApplication.set('resume', file)
-            // await jobApplication.save()
-
-            // // Retrieve file
-            // const query = new Moralis.Query('Applications')
-            // query.equalTo('name', 'Satoshi')
-            // query.find().then(function ([application]) {
-            //     const ipfs = application.get('resume').ipfs()
-            //     const hash = application.get('resume').hash()
-            //     console.log('IPFS url', ipfs)
-            //     console.log('IPFS hash', hash)
-            // })
     }
 
     return (
@@ -185,11 +177,7 @@ function StartModal(props) {
                                     ]}
                                 >
                                     <TextArea 
-                                        placeholder={`0xABCDFA1DC112917c781942Cc01c68521c415e, 1
-0x00192Fb10dF37c9FB26829eb2CC623cd1BF599E8, 2
-0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c, 3
-0xEA674fdDe714fd979de3EdF0F56AA9716B898ec8, 4
-...`}
+                                        placeholder={topNFTs}
                                         rows={10}
                                     />
                                 </Form.Item>

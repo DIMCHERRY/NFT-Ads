@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Moralis from 'moralis';
+import { ExclamationCircleOutlined, PlusOutlined }  from '@ant-design/icons';
 
 import './index.css';
 import logo from '../../assets/logo.png';
@@ -66,6 +67,7 @@ function Main() {
                 <img src={logo} className="App-logo" alt="logo" />
                 <div className="App__header-menu">
                     <div className="App__header-menu-item" onClick={clickAbout}>
+                        <ExclamationCircleOutlined/>
                         <span className="App__header-menu-about">About</span>
                     </div>
                     {
@@ -77,6 +79,7 @@ function Main() {
                             </div>
                         </div>
                         : <div className="App__header-menu-item" onClick={connectWallet}>
+                            <PlusOutlined />
                             <span className="App__header-menu-started">connectWallet</span>
                         </div>
                     }
