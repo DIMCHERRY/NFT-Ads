@@ -197,10 +197,10 @@ function StartModal(props) {
                                     ]}
                                 >
                                     <TextArea 
-                                        placeholder={`0xABCDFA1DC112917c781942Cc01c68521c415e, 1
-0x00192Fb10dF37c9FB26829eb2CC623cd1BF599E8, 2
-0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c, 3
-0xEA674fdDe714fd979de3EdF0F56AA9716B898ec8, 4
+                                        placeholder={`0xABCDFA1DC112917c781942Cc01c68521c415e
+0x00192Fb10dF37c9FB26829eb2CC623cd1BF599E8
+0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c
+0xEA674fdDe714fd979de3EdF0F56AA9716B898ec8
 ...`}
                                         rows={10}
                                     />
