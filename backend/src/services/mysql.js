@@ -27,27 +27,37 @@ class Mysql {
         })
     }
     insertOneUser(_address, _userdata) {
-        var sql = "INSERT INTO users (address, user_data) VALUES (?, ?)";
+        var sql = "INSERT INTO t_users (address, user_data) VALUES (?, ?)";
         this.connection.query(sql, [_address, _userdata], function (err, result) {
             if (err) throw err;
             console.log("1 record inserted");
         });
     }
     queryUserByAddress(_address, callback) {
-        this.connection.query('SELECT user_data FROM users where address = ?', [_address], function (err, rows, fields) {
+        this.connection.query('SELECT user_data FROM t_users where address = ?', [_address], function (err, rows, fields) {
             if (err) throw err
             return callback(rows[0].user_data);
         })
     }
-    insertOneToken(_image, address) {
-        var sql = "INSERT INTO token (`img_ipfs_url`, `creator_address`) VALUES (?, ?)";
-        this.connection.query(sql, [_image, address], function (err, result) {
+    insertOneToken(_image, address, _description) {
+        var sql = "INSERT INTO t_tokens (`img_ipfs_url`, `creator_address`, `description`) VALUES (?, ?, ?)";
+        this.connection.query(sql, [_image, address, _description], function (err, result) {
             if (err) throw err;
             console.log("1 record inserted");
         });
     }
     async queryLastTokenIDAsync() {
-        let [rows, fields] = await this.connection.promise().query("SELECT id FROM token order by id desc limit 1");
+        let [rows, fields] = await this.connection.promise().query("SELECT id FROM t_tokens order by id desc limit 1");
+        if (rows.length == 0) {
+            console.log("query returns none");
+            return 0;
+        }
+        console.log(rows[0])
+        return rows[0].id;
+    }
+
+    async queryTokenByAddressAsync(_address) {
+        let [rows, fields] = await this.connection.promise().query('SELECT id, img_ipfs_url FROM t_tokens where creator_address = ?', [_address]);
         if (rows.length == 0) {
             console.log("query returns none");
             return 0;
@@ -57,7 +67,7 @@ class Mysql {
     }
 
     queryTokenByAddress(_address, callback) {
-        this.connection.query('SELECT id, img_ipfs_url FROM token where creator_address = ?', [_address], function (err, rows, fields) {
+        this.connection.query('SELECT id, img_ipfs_url FROM t_tokens where creator_address = ?', [_address], function (err, rows, fields) {
             if (err) throw err
             console.log(rows[0]);
             return callback(rows[0].id);
@@ -76,7 +86,7 @@ class Mysql {
         })
     }
     async queryTokenByIDAsync(_id) {
-        let [rows, fields] = await this.connection.promise().query('SELECT token_content, img_ipfs_url FROM token where id = ?', [_id]);
+        let [rows, fields] = await this.connection.promise().query('SELECT description, img_ipfs_url FROM t_tokens where id = ?', [_id]);
         if (rows.length == 0) {
             console.log("query returns none");
             return '', '';
@@ -85,7 +95,7 @@ class Mysql {
         return rows[0];
     }
     queryTokenByID(_id, callback) {
-        this.connection.query('SELECT token_content, img_ipfs_url FROM token where id = ?', [_id], function (err, rows, fields) {
+        this.connection.query('SELECT token_content, img_ipfs_url FROM t_tokens where id = ?', [_id], function (err, rows, fields) {
             if (err) throw err
             if (rows.length == 0) {
                 console.log("query returns none");
