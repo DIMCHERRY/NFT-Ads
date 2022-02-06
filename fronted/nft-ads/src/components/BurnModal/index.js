@@ -11,31 +11,39 @@ function BurnModal (props) {
 
     const clickConfirm = async () => {
         try {
+            const NFTADAddress = "0x659056fC486058d2c442410776A425120749757F";
             // Moralis.start();
             // const web3Provider = await Moralis.enableWeb3();
-            // const ethers = Moralis.web3Library;
+            // // const ethers = Moralis.web3Library;
+            
             // const sendOptions = {
-            //     contractAddress: "0xe...56",
-            //     functionName: "setMessage",
-            //     abi: ABI,
+            //     contractAddress: NFTADAddress,
+            //     functionName: "mint",
+            //     abi: NAFTADABI,
             //     params: {
-            //       _newMessage: "Hello Moralis",
+            //       address: "0x26a4eEA2a74cd06E978552579416faF9B9b97ABF",
+            //       id: 1,
+            //       amount:1,
             //     },
             //   };
               
             // const transaction = await Moralis.executeFunction(sendOptions);
             // console.log(transaction.hash)
-            // --> "0x39af55979f5b690fdce14eb23f91dfb0357cb1a27f387656e197636e597b5b7c"
             
-            // Wait until the transaction is confirmed
-            //await transaction.wait();
+            // //Wait until the transaction is confirmed
+            // await transaction.wait();
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
-            const NFTADAddress = "0x659056fC486058d2c442410776A425120749757F";
-            const NFTADContract = new ethers.Contract(NFTADAddress, NAFTADABI, provider);
+            
+            const NFTADContract = new ethers.Contract(NFTADAddress, NAFTADABI, signer);
             const name = await NFTADContract.name()
             console.log(name)
-            const tx = await NFTADContract.mint("0x26a4eEA2a74cd06E978552579416faF9B9b97ABF", 1, 1);
+            const options = {
+                value: ethers.utils.parseEther("0.1"),
+                gasLimit: 1000000
+            }
+            //const tx = await NFTADContract.mint("0x26a4eEA2a74cd06E978552579416faF9B9b97ABF", 1, 1);
+            const tx = await NFTADContract.mint("0x26a4eEA2a74cd06E978552579416faF9B9b97ABF", 1, 1, options);
             console.log(tx);
             await tx.wait();
           } catch (error) {
