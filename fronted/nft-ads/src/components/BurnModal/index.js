@@ -1,25 +1,46 @@
 import { closeIcon } from "../../assets/icons";
+import Moralis from 'moralis';
+import NAFTADABI from "../../abi/NFTAD.json"
 import './index.css';
 import { Upload, Modal, Form, Input, Button } from 'antd';
+import { ethers } from "ethers";
 import React from 'react';
 
-function AboutModal (props) {
+function BurnModal (props) {
     const { handleClose } = props;
 
-    const clickConfirm = () => {
-        var Web3 = require('web3');
-        var web3 = new Web3(Web3.givenProvider);
-        const transactionHash = '0xbd7dffcec31cd3038852e7f3e99a12bf5fa0a1ca2aa606b5a1f9d83c361ce39d';
-        web3.eth.getTransaction(transactionHash, function (error, result) {
-            console.log(result);
-            //todo:move to contract check
-            var to = result.to.toLowerCase();
-            var from = result.from.toLowerCase();
-            //burn nft to get award
-            if(result.value === "3000000000000000" && to === "0xba17eeb3f0413b76184ba8ed73067063fba6e2eb") {
-                console.log("success")
-            }
-        });
+    const clickConfirm = async () => {
+        try {
+            // Moralis.start();
+            // const web3Provider = await Moralis.enableWeb3();
+            // const ethers = Moralis.web3Library;
+            // const sendOptions = {
+            //     contractAddress: "0xe...56",
+            //     functionName: "setMessage",
+            //     abi: ABI,
+            //     params: {
+            //       _newMessage: "Hello Moralis",
+            //     },
+            //   };
+              
+            // const transaction = await Moralis.executeFunction(sendOptions);
+            // console.log(transaction.hash)
+            // --> "0x39af55979f5b690fdce14eb23f91dfb0357cb1a27f387656e197636e597b5b7c"
+            
+            // Wait until the transaction is confirmed
+            //await transaction.wait();
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const NFTADAddress = "0x659056fC486058d2c442410776A425120749757F";
+            const NFTADContract = new ethers.Contract(NFTADAddress, NAFTADABI, provider);
+            const name = await NFTADContract.name()
+            console.log(name)
+            const tx = await NFTADContract.mint("0x26a4eEA2a74cd06E978552579416faF9B9b97ABF", 1, 1);
+            console.log(tx);
+            await tx.wait();
+          } catch (error) {
+            console.error(error);
+        }
     }
 
     return (
@@ -41,4 +62,4 @@ function AboutModal (props) {
     );
 }
 
-export default AboutModal;
+export default BurnModal;
