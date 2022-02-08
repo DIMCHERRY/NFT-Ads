@@ -81,7 +81,7 @@ contract NFTAD1155 is ERC1155, Ownable{
         _burn(msg.sender, id, amount);
         address adOwner = adOwners[id];
         uint256 payAmount = PRICE*amount;
-        require(adOwnerBalance[adOwner] > payAmount);
+        require(adOwnerBalance[adOwner] >= payAmount);
         adOwnerBalance[adOwner] -= payAmount;
         payable(msg.sender).transfer(payAmount);
     }
