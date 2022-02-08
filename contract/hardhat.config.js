@@ -48,10 +48,6 @@ module.exports = {
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
     hardhat: {
-        forking: {
-          url: process.env.ALCHEMY_WEB3_URI || '',
-          blockNumber: process.env.BLOCK_NUMBER
-        }
     }
   },
   gasReporter: {
