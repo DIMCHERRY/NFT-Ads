@@ -9,7 +9,7 @@ contract NFTAD1155 is ERC1155, Ownable{
     // Contract name
     string public name;
     string public uri;
-    uint256 public constant PRICE = 0.1 * 10**18; // 0.1 MATIC
+    uint256 public constant PRICE = 1 * 10**17; // 0.1 MATIC
     mapping(uint256 => address) private adOwners;
     mapping(address => uint256) private adOwnerBalance;
 
@@ -52,13 +52,14 @@ contract NFTAD1155 is ERC1155, Ownable{
 
     function mintToMany(address[] calldata accounts, uint256 id, uint256 amount) external payable returns (uint mintedQty) {
         if (adOwners[id] == address(0)) {
-            refundIfOver(PRICE, amount);
+            refundIfOver(PRICE, amount*accounts.length);
             adOwners[id] = msg.sender;
         }else{
             require(adOwners[id]==msg.sender, "Need to be AD Owner");
-            refundIfOver(PRICE, amount);
+            refundIfOver(PRICE, amount*accounts.length);
         }
-        adOwnerBalance[msg.sender] += PRICE*amount;
+        //
+        adOwnerBalance[msg.sender] += PRICE*amount*accounts.length;
         uint mintCost = gasleft();
         _mint(accounts[0], id, amount, new bytes(0));
         emit Minted(msg.sender, accounts[0], id, amount);
@@ -81,7 +82,7 @@ contract NFTAD1155 is ERC1155, Ownable{
         _burn(msg.sender, id, amount);
         address adOwner = adOwners[id];
         uint256 payAmount = PRICE*amount;
-        require(adOwnerBalance[adOwner] >= payAmount);
+        require(adOwnerBalance[adOwner] >= payAmount, "AdOwner have no enough balance to Pay");
         adOwnerBalance[adOwner] -= payAmount;
         payable(msg.sender).transfer(payAmount);
     }
