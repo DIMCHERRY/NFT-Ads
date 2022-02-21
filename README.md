@@ -1,6 +1,6 @@
 # NFT-Ads
 
-# 家人们请随意编辑 
+# 家人们随意编辑，随意提代码 
 
 官网链接：https://nftads.info/
 
@@ -10,6 +10,8 @@ todo:
 3. 域名续期
 
 
+要参加的比赛
+1. https://xrplnft.devpost.com/ ，要求是把代码部署到XRPL链上，进入组队 https://devpost.com/software/432475/joins/7tKld2ONRbLnE2kZ9ZdI_Q
 
 
 
