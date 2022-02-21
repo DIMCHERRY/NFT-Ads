@@ -26,4 +26,4 @@ todo:
 
 
 成就：
-参与ETHGlobal比赛：https://showcase.ethglobal.com/roadtoweb3/nft-ads，获得polygon入围奖
+参与ETHGlobal比赛：https://showcase.ethglobal.com/roadtoweb3/nft-ads  获得polygon入围奖
