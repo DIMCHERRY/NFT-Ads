@@ -16,6 +16,7 @@ todo:
 Submission Period: January 31, 2022 (10:00 am Eastern Time) – March 14, 2022 (5:00 pm Eastern Time) (“Submission Period”).
 
 2. https://meter-ethereum.devpost.com/ ,要求是部署链，加入组队 https://devpost.com/software/432477/joins/_k1WdB_25rka95c_F6KAdQ
+
 Submission Period: Monday, February 14, 2022 (10:00 am Eastern Time) – Monday, April 11, 2022 (5:00 pm Eastern Time) (“Submission Period”).
 
 
