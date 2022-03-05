@@ -1,7 +1,5 @@
 # NFT-Ads
 
-# 家人们随意编辑，随意提代码 
-
 官网链接：https://nftads.info/
 
 todo:
