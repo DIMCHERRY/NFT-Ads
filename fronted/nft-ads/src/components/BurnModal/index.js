@@ -1,5 +1,4 @@
 import { closeIcon } from "../../assets/icons";
-import Moralis from 'moralis';
 import NAFTADABI from "../../abi/NFTAD.json"
 import './index.css';
 import { Button } from 'antd';
