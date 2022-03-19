@@ -1,7 +1,5 @@
 # NFT-Ads
 
-# 家人们随意编辑，随意提代码 
-
 官网链接：https://nftads.info/
 
 todo:
@@ -11,11 +9,8 @@ todo:
 
 
 要参加的比赛
-1. https://xrplnft.devpost.com/ ，要求是把代码部署到XRPL链上，加入组队 https://devpost.com/software/432475/joins/7tKld2ONRbLnE2kZ9ZdI_Q
 
-Submission Period: January 31, 2022 (10:00 am Eastern Time) – March 14, 2022 (5:00 pm Eastern Time) (“Submission Period”).
-
-2. https://meter-ethereum.devpost.com/ ,要求是部署链，加入组队 https://devpost.com/software/432477/joins/_k1WdB_25rka95c_F6KAdQ
+ https://meter-ethereum.devpost.com/ ,要求是部署链，加入组队 https://devpost.com/software/432477/joins/_k1WdB_25rka95c_F6KAdQ
 
 Submission Period: Monday, February 14, 2022 (10:00 am Eastern Time) – Monday, April 11, 2022 (5:00 pm Eastern Time) (“Submission Period”).
 
