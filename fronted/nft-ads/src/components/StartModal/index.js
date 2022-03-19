@@ -185,7 +185,7 @@ function StartModal(props) {
         if (!validateMetamask()) {
             return;
         }
-        const NFTADAddress = "0xa3c7fb7463967284996739887a7fF994372899d2";
+        const NFTADAddress = "0x20E156f53E6F823e92FFEDA7eDf7B55188223F95";
         const allRecipients = ownerPackages.concat(recipients);
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
