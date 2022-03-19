@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import Moralis from 'moralis';
+import React, { useState } from "react";
 import { ExclamationCircleOutlined, PlusOutlined }  from '@ant-design/icons';
 
 import './index.css';
@@ -8,12 +7,14 @@ import AboutModal from '../../components/AboutModal';
 import StartModal from '../../components/StartModal';
 import BurnModal from  '../../components/BurnModal';
 import { handleAddress } from "../../util/util";
+import { post } from '../../network';
+import { useWallet } from "../../util/wallet";
+import { message } from "antd";
 
 function Main() {
     const [isBurnModalVisible, setIsBurnModalVisible] = useState(false);
     const [isAboutModalVisible, setIsAboutModalVisible] = useState(false);
     const [isStartModalVisible, setIsStartModalVisible] = useState(false);
-    const [accountAddress, setAccountAddress] = useState('');
 
     const clickAbout = () => {
         setIsAboutModalVisible(true);
@@ -21,30 +22,6 @@ function Main() {
 
     const handleAboutModalClose = () => {
         setIsAboutModalVisible(false);
-    }
-    
-    const connectWallet = async() => {
-        let user = Moralis.User.current();
-
-        console.log(user);
-
-        if (!user) {
-          user = await Moralis.authenticate();
-        }
-
-        setAccountAddress(user.attributes.accounts[0]);
-
-        localStorage.setItem('accountAddress', user.attributes.accounts[0]);
-    }
-
-    const disconnectWallet = async() => {
-        await Moralis.User.logOut();
-
-        setAccountAddress('');
-
-        localStorage.removeItem('accountAddress');
-
-        console.log(accountAddress);
     }
 
     const clickStartToDrop = () => {
@@ -63,6 +40,32 @@ function Main() {
         setIsBurnModalVisible(false);
     }
 
+    const { walletState, web3, connectMetamask, disconnectMetamask, validateMetamask } = useWallet();
+    const { address } = walletState;
+
+    const login = async () => {
+        const address = await connectMetamask();
+        if (!address) {
+            return;
+        }
+        try {
+            const { nounce } = (await post('/login/nounce', { address }))?.data?.data;
+            const signedNounce = await web3.current.eth.personal.sign(nounce, address);
+            if (!signedNounce) {
+                return;
+            }
+            await post('/login/token', { address, nounce, signedNounce, user_data: {} });
+        } catch (error) {
+            message.warn(error.message);
+            console.error(error);
+        }
+    }
+
+    const logout = async () => {
+        disconnectMetamask();
+        await window.cookieStore.delete('token');
+    }
+
     return(
         <div className="App__Main">
             <header className="App__header">
@@ -73,14 +76,14 @@ function Main() {
                         <span className="App__header-menu-about">About</span>
                     </div>
                     {
-                        accountAddress ?
-                        <div className="App__header-menu-item" onClick={disconnectWallet}>
+                        address ?
+                        <div className="App__header-menu-item" onClick={logout}>
                             <div className="App__header-menu-disconnect">
-                                <span className="App__header-account-address">{handleAddress(accountAddress)}</span>
+                                <span className="App__header-account-address">{handleAddress(address)}</span>
                                 <span className="App__header-menu-started">DisconnectWallet</span>
                             </div>
                         </div>
-                        : <div className="App__header-menu-item" onClick={connectWallet}>
+                        : <div className="App__header-menu-item" onClick={login}>
                             <PlusOutlined />
                             <span className="App__header-menu-started">connectWallet</span>
                         </div>
@@ -136,6 +139,8 @@ function Main() {
             <StartModal 
                 isModalVisible={isStartModalVisible}
                 handleClose={handleStartModalClose}
+                validateMetamask={validateMetamask}
+                address={address}
             />
             <BurnModal
                 isModalVisible={isBurnModalVisible}

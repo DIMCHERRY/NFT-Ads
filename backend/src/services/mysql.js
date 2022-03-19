@@ -39,6 +39,12 @@ class Mysql {
             return callback(rows[0].user_data);
         })
     }
+    existUserByAddress(_address, callback) {
+        this.connection.query('SELECT user_data FROM t_users where address = ?', [_address], function (err, rows, fields) {
+            if (err) throw err
+            return callback(Boolean(rows[0]));
+        })
+    }
     insertOneToken(_image, address, _description) {
         var sql = "INSERT INTO t_tokens (`img_ipfs_url`, `creator_address`, `description`) VALUES (?, ?, ?)";
         this.connection.query(sql, [_image, address, _description], function (err, result) {

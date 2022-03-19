@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Upload, Modal, Form, Input, Button, Checkbox } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import Moralis from 'moralis';
 import axios from 'axios';
 import { ethers } from "ethers";
 import NAFTADABI from "../../abi/NFTAD.json"
@@ -17,6 +16,7 @@ import DOODLES from "../../assets/topNFTs/DOODLES.png";
 import PHB from "../../assets/topNFTs/PHB.png";
 import LAND from "../../assets/topNFTs/LAND.png";
 import WOW from "../../assets/topNFTs/WOW.png";
+import { post, HOST } from '../../network';
 
 import './index.css';
 import { getNFTOwners } from '../../util/util';
@@ -67,14 +67,13 @@ const uploadButton = (
 );
 
 function StartModal(props) {
-    const { handleClose } = props;
+    const { handleClose, address, validateMetamask } = props;
     const [form] = Form.useForm();
     const [previewVisible, setPreviewVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
     const [fileList, setFileList] = useState([]);
     const { TextArea } = Input;
-    const accountAddress = localStorage.getItem('accountAddress');
     const [topNFTs, setTopNFTs] = useState([]);
     const [tokenId, setTokenId] = useState('');
     const [ownerPackages, setOwnerPackages] = useState([]);
@@ -115,24 +114,31 @@ function StartModal(props) {
 
     const handleChange = ({ fileList }) => {
         setFileList(fileList);
-        getIpfs();
+        getIpfs(fileList);
     };
 
-    const getIpfs = async () => {
+    const getIpfs = async (fileList) => {
         // Save file input to IPFS
         if (fileList.length > 0) {
-            getBase64(fileList[0].originFileObj).then(ba64 => {
-                const file = new Moralis.File(fileList[0].name, { base64: ba64 });
-
-                file.saveIPFS().then(hash => {
-                    handleUpload(file.ipfs());
+            const file = fileList[0];
+            const blob =  await (await fetch(file)).blob();
+            const data = new FormData();
+            data.append('file', blob);
+            const res = await post(
+                "https://ipfs.infura.io:5001/api/v0/add?pin=false",
+                data,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
                 })
-            })
+                .catch(err => console.log('error:', err));
+            handleUpload(`https://ipfs.infura.io:5001/api/v0/cat?arg=${res.data.Hash}`)
         }
     }
 
     const handleUpload = (imageUrl) => {
-        const uploadUrl = "https://nftads.info/api/tokens/";
+        const uploadUrl = `${HOST}/api/tokens/`;
 
         axios.post(uploadUrl, {
             "image_url": imageUrl
@@ -176,6 +182,9 @@ function StartModal(props) {
     }
 
     const handlePay = async () => {
+        if (!validateMetamask()) {
+            return;
+        }
         const NFTADAddress = "0xa3c7fb7463967284996739887a7fF994372899d2";
         const allRecipients = ownerPackages.concat(recipients);
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -195,7 +204,7 @@ function StartModal(props) {
     return (
         <div className="App__modal App__about-modal-wrapper" data-visible={props.isModalVisible}>
             {
-                accountAddress ?
+                address ?
                 <div className="App__modal-content">
                     <div className="App__modal-title">
                         <span>Send to many recipients</span>
@@ -222,22 +231,19 @@ function StartModal(props) {
                                     ]}
                                 >
                                     <Upload
-                                        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                                        // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                                        action={`${HOST}/ipfs/upload`}
                                         listType="picture-card"
+                                        beforeUpload={file => {
+                                            setFileList([file]);
+                                            return false;
+                                        }}
                                         fileList={fileList}
                                         onPreview={handlePreview}
                                         onChange={handleChange}
                                     >
                                         {fileList.length >= 1 ? null : uploadButton}
                                     </Upload>
-                                    <Modal
-                                        visible={previewVisible}
-                                        title={previewTitle}
-                                        footer={null}
-                                        onCancel={handleCancel}
-                                    >
-                                        <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                                    </Modal>
                                 </Form.Item>
                                 <Form.Item
                                     label="RECIPIENTS"
@@ -284,6 +290,14 @@ function StartModal(props) {
                                     <Button type="primary" htmlType="submit" onClick={handlePay}>Pay</Button>
                                 </Form.Item>
                             </Form>
+                            <Modal
+                                visible={previewVisible}
+                                title={previewTitle}
+                                footer={null}
+                                onCancel={handleCancel}
+                            >
+                                <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                            </Modal>
                         </div>
                     </div>
                 </div>
