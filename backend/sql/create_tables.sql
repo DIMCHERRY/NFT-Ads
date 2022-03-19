@@ -1,5 +1,7 @@
 create database `NFTADS`;
 
+USE `NFTADS`;
+
 CREATE TABLE `t_users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary Key',
   `user_data` text COMMENT 'user_data',
