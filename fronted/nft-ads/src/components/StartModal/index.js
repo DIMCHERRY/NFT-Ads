@@ -190,7 +190,7 @@ function StartModal(props) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const NFTADContract = new ethers.Contract(NFTADAddress, NAFTADABI, signer);
-        const fees = (0.1 * allRecipients.length).toString();
+        const fees = (0.001 * allRecipients.length).toString();
         const value = ethers.utils.parseEther(fees);
         const options = {
             value,
@@ -284,7 +284,7 @@ function StartModal(props) {
                                 <Form.Item
                                     label="CONFIRMATION DETAILS"
                                 >
-                                    0.1Matic/Per
+                                    0.001Matic/Per
                                 </Form.Item>
                                 <Form.Item>
                                     <Button type="primary" htmlType="submit" onClick={handlePay}>Pay</Button>
