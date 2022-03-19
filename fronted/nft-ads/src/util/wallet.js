@@ -82,7 +82,8 @@ export const useWallet = () => {
         window.myWeb3 = web3.current;
         const myWeb3 = web3.current;
         if (web3.current.currentProvider.networkVersion !== '137') {
-            return message.warn('Switch network to Matic Mainnet, please!');;
+            message.warn('Switch network to Matic Mainnet, please!')
+            return;
         }
         try {
             await myWeb3.eth.requestAccounts();

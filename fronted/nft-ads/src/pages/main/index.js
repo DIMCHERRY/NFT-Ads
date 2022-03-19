@@ -40,7 +40,7 @@ function Main() {
         setIsBurnModalVisible(false);
     }
 
-    const { walletState, web3, connectMetamask, disconnectMetamask } = useWallet();
+    const { walletState, web3, connectMetamask, disconnectMetamask, validateMetamask } = useWallet();
     const { address } = walletState;
 
     const login = async () => {
@@ -139,6 +139,7 @@ function Main() {
             <StartModal 
                 isModalVisible={isStartModalVisible}
                 handleClose={handleStartModalClose}
+                validateMetamask={validateMetamask}
                 address={address}
             />
             <BurnModal

@@ -67,7 +67,7 @@ const uploadButton = (
 );
 
 function StartModal(props) {
-    const { handleClose, address } = props;
+    const { handleClose, address, validateMetamask } = props;
     const [form] = Form.useForm();
     const [previewVisible, setPreviewVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
@@ -182,6 +182,9 @@ function StartModal(props) {
     }
 
     const handlePay = async () => {
+        if (!validateMetamask()) {
+            return;
+        }
         const NFTADAddress = "0xa3c7fb7463967284996739887a7fF994372899d2";
         const allRecipients = ownerPackages.concat(recipients);
         const provider = new ethers.providers.Web3Provider(window.ethereum);
