@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ExclamationCircleOutlined, PlusOutlined }  from '@ant-design/icons';
+import { ExclamationCircleOutlined }  from '@ant-design/icons';
 
 import './index.css';
 import logo from '../../assets/logo.png';
@@ -15,7 +15,7 @@ import { post } from '../../network';
 import { useWallet } from "../../hooks/useWallet";
 import { message } from "antd";
 
-function Main() {
+const Home = () => {
     const [isBurnModalVisible, setIsBurnModalVisible] = useState(false);
     const [isAboutModalVisible, setIsAboutModalVisible] = useState(false);
     const [isStartModalVisible, setIsStartModalVisible] = useState(false);
@@ -171,4 +171,4 @@ function Main() {
     )
 }
 
-export default Main;
+export default Home;
