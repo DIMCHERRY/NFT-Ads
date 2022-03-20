@@ -3,6 +3,7 @@ import { ExclamationCircleOutlined, PlusOutlined }  from '@ant-design/icons';
 
 import './index.css';
 import logo from '../../assets/logo.png';
+import metaMaskLogo from '../../assets/metamask.png';
 import AboutModal from '../../components/AboutModal';
 import StartModal from '../../components/StartModal';
 import BurnModal from  '../../components/BurnModal';
@@ -83,9 +84,9 @@ function Main() {
                                 <span className="App__header-menu-started">DisconnectWallet</span>
                             </div>
                         </div>
-                        : <div className="App__header-menu-item" onClick={login}>
-                            <PlusOutlined />
-                            <span className="App__header-menu-started">connectWallet</span>
+                        : <div className="App__header-menu-login-item" onClick={login}>
+                             <img src={metaMaskLogo} className="App__metaMaskLogo" alt="metaMaskLogo" />
+                            <span className="App__header-menu-login">connect</span>
                         </div>
                     }
                     
@@ -110,7 +111,7 @@ function Main() {
                     <div className="App__body-advantages-title">
                     NFT Ads' advantages :
                     </div>
-                <div className="App__body-advantages-content">
+                    <div className="App__body-advantages-content">
                     <div className="create-sell-content">
                         <div className="create-sell-content-icon">
                             <i className="bi bi-shield-check"></i>

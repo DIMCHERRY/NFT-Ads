@@ -90,6 +90,33 @@
   width: 400px;
 }
 
+.App__header-menu-login-item {
+  border-radius: 8px;
+  background-color: #008AFF;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.App__header-menu-login {
+  cursor: pointer;
+  font-size: 16px;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  color: #fff;
+  margin-right: 8px;
+  margin-left: 4px;
+}
+
+.App__metaMaskLogo {
+  width: 16px;
+  height:16px;
+  margin-left: 8px;
+  margin-top: 2px;
+}
+
 .App__body-start-to-drop {  
   background-color: #008AFF;
   border-radius: 15px;
