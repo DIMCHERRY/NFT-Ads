@@ -9,7 +9,7 @@ import StartModal from '../../components/StartModal';
 import BurnModal from  '../../components/BurnModal';
 import { handleAddress } from "../../util/util";
 import { post } from '../../network';
-import { useWallet } from "../../util/wallet";
+import { useWallet } from "../../hooks/useWallet";
 import { message } from "antd";
 
 function Main() {

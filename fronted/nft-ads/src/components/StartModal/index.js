@@ -1,53 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Upload, Modal, Form, Input, Button, Checkbox } from 'antd';
+import React, { useState } from "react";
+import { Upload, Modal, Form, Input, Button, Checkbox, Spin, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { ethers } from "ethers";
 import NAFTADABI from "../../abi/NFTAD.json"
 
 import { closeIcon } from "../../assets/icons";
-import AZUKI from "../../assets/topNFTs/AZUKI.png";
-import BAYC from "../../assets/topNFTs/BAYC.png";
-import MAYC from "../../assets/topNFTs/MAYC.png";
-import CLONEX from "../../assets/topNFTs/CLONEX.png";
-import CRYPTOPUNKS from "../../assets/topNFTs/CRYPTOPUNKS.png";
-import HAPE from "../../assets/topNFTs/HAPE.png";
-import DOODLES from "../../assets/topNFTs/DOODLES.png";
-import PHB from "../../assets/topNFTs/PHB.png";
-import LAND from "../../assets/topNFTs/LAND.png";
-import WOW from "../../assets/topNFTs/WOW.png";
 import { post, HOST } from '../../network';
+import useTopNFTs from '../../hooks/useTopNFTs';
 
 import './index.css';
-import { getNFTOwners } from '../../util/util';
-
-const contractConsts = {
-    AZUKI: "0xed5af388653567af2f388e6224dc7c4b3241c544",
-    BAYC: "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d",
-    MAYC:"0x60e4d786628fea6478f785a6d7e704777c86a7c6",
-    CLONEX: "0x49cF6f5d44E70224e2E23fDcdd2C053F30aDA28B",
-    CRYPTOPUNKS: "0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb",
-    HAPE: "0x4Db1f25D3d98600140dfc18dEb7515Be5Bd293Af",
-    DOODLES: "0x8a90CAb2b38dba80c64b7734e58Ee1dB38B8992e",
-    PHB: "0x67D9417C9C3c250f61A83C7e8658daC487B56B09",
-    LAND: "0x50f5474724e0Ee42D9a4e711ccFB275809Fd6d4a",
-    WOW: "0xe785e82358879f061bc3dcac6f0444462d4b5330",
-};
-
-const nftImages = {
-    AZUKI,
-    BAYC,
-    MAYC,
-    CLONEX,
-    CRYPTOPUNKS,
-    HAPE,
-    DOODLES,
-    PHB,
-    LAND,
-    WOW
-};
-
-const topNFTKeys = ['AZUKI', 'BAYC', 'MAYC', 'CLONEX', 'CRYPTOPUNKS', 'HAPE', 'DOODLES', 'PHB', 'LAND', 'WOW'];
 
 function getBase64(file) {
     return new Promise((resolve, reject) => {
@@ -74,29 +36,9 @@ function StartModal(props) {
     const [previewTitle, setPreviewTitle] = useState('');
     const [fileList, setFileList] = useState([]);
     const { TextArea } = Input;
-    const [topNFTs, setTopNFTs] = useState([]);
+    const { topNFTs } = useTopNFTs();
     const [tokenId, setTokenId] = useState('');
-    const [ownerPackages, setOwnerPackages] = useState([]);
-    const [recipients, setRecipients] = useState([]);
-
-    useEffect(() => {
-        (async() => {
-            const results = [];
-
-            for (let item of topNFTKeys) {
-                const nftOwners = await getNFTOwners(contractConsts[item]);
-
-                results.push({
-                    key: item,
-                    image: nftImages[item],
-                    nftOwners
-                });
-            }
-
-            setTopNFTs(results);
-        })();
-    }, []);
-    
+    const [loading, setLoading] = useState(false);
 
     const handleCancel = () => {
         setPreviewVisible(false);
@@ -132,7 +74,10 @@ function StartModal(props) {
                         "Content-Type": "multipart/form-data"
                     }
                 })
-                .catch(err => console.log('error:', err));
+                .catch(error => {
+                    console.error('ipfs upload error:', error);
+                    message.error(error.message);
+                });
             handleUpload(`https://ipfs.infura.io:5001/api/v0/cat?arg=${res.data.Hash}`)
         }
     }
@@ -147,159 +92,178 @@ function StartModal(props) {
             setTokenId(res.data.data.id);
             console.log(res.data.data.id);
         })
-        .catch(error => error);
+        .catch(error => {
+            console.error('upload error:', error);
+            message.error(error.message);
+        });
     }
 
-    const OwnersPackage = (nftName, image, owners) => {
-        return(
-            <div className="App__owners-package" key={nftName}>
-                <Checkbox value={owners.join(',')} name={nftName} onChange={handlePackageChange}/>
-                <img src={image} alt={nftName} className="App__owners-package-nft-image"/>
-            </div>
-        )
-    }
-
-    const handlePackageChange = (e) => {
-        const value = e.target.value.split(',');
-
-        let newPackages;
-
-        if(e.target.checked) {
-            newPackages = ownerPackages.concat(value);
-
-            setOwnerPackages(newPackages);
-        } else {
-            newPackages = ownerPackages.filter(item => item !== value);
-            
-            setOwnerPackages(newPackages);
+    const packOptions = topNFTs.map(({ key, nftOwners, image }) => {
+        return {
+            label: <img src={image} alt={key} className="App__owners-package-nft-image"/>,
+            value: nftOwners?.join()
         }
-    }
+    });
 
-    const handleTextAreaChange = (e) => {
-        const guests = e.target.value.split('\n');
-
-        setRecipients(Array.from(new Set(guests)));
+    const getAllRecipients = () => {
+        const packs = form.getFieldValue('pack');
+        const recs = form.getFieldValue('recipients').split('\n');
+        const allRecipients = packs.join().split(',').concat(Array.from(new Set(recs))).filter(Boolean);
+        return allRecipients;
     }
 
     const handlePay = async () => {
         if (!validateMetamask()) {
             return;
         }
-        const NFTADAddress = "0x20E156f53E6F823e92FFEDA7eDf7B55188223F95";
-        const allRecipients = ownerPackages.concat(recipients);
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const NFTADContract = new ethers.Contract(NFTADAddress, NAFTADABI, signer);
-        const fees = (0.001 * allRecipients.length).toString();
-        const value = ethers.utils.parseEther(fees);
-        const options = {
-            value,
-            gasLimit: 1000000
-        };
-        const tx = await NFTADContract.mintToMany(allRecipients, tokenId, 1, options);
+        try {
+            setLoading(true);
+            const NFTADAddress = "0xa3c7fb7463967284996739887a7fF994372899d2";
+            const allRecipients = getAllRecipients();
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const NFTADContract = new ethers.Contract(NFTADAddress, NAFTADABI, signer);
+            const fees = (0.001 * allRecipients.length).toString();
+            const value = ethers.utils.parseEther(fees);
+            const options = {
+                value,
+                gasLimit: 1000000
+            };
+            debugger
+            await NFTADContract.mintToMany(allRecipients, tokenId, 1, options);
 
-        alert('Success!');
-        handleClose();
-    }
+            alert('Success!');
+            handleClose();
+        } catch (error) {
+            console.error('pay error:', error);
+            message.error(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="App__modal App__about-modal-wrapper" data-visible={props.isModalVisible}>
             {
                 address ?
-                <div className="App__modal-content">
-                    <div className="App__modal-title">
-                        <span>Send to many recipients</span>
-                        <span className="App__modal-close" onClick={handleClose}>
-                            {closeIcon}
-                        </span>
-                    </div>
-                    <div className="App__modal-body">
-                        <div className="App__modal-start-description">
-                            Input any token address and then batch transfer tokens to many different recipients in a single tx.
+                <div className="App__modal-content" style={{ overflow: 'scroll' }}>
+                    <Spin spinning={loading}>
+                        <div className="App__modal-title">
+                            <span>Send to many recipients</span>
+                            <span className="App__modal-close" onClick={handleClose}>
+                                {closeIcon}
+                            </span>
                         </div>
-                        <div className="App__modal-start-body">
-                            <Form
-                                form={form}
-                                layout="vertical"
-                            >
-                                <Form.Item
-                                    label="UPLOAD A PICTURE"
-                                    name="upload"
-                                    rules={[
-                                        {
-                                        required: true,
-                                        },
-                                    ]}
+                        <div className="App__modal-body">
+                            <div className="App__modal-start-description">
+                                Input any token address and then batch transfer tokens to many different recipients in a single tx.
+                            </div>
+                            <div className="App__modal-start-body">
+                                <Form
+                                    form={form}
+                                    layout="vertical"
+                                    initialValues={{ pack: [], recipients: '' }}
                                 >
-                                    <Upload
-                                        // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                                        action={`${HOST}/ipfs/upload`}
-                                        listType="picture-card"
-                                        beforeUpload={file => {
-                                            setFileList([file]);
-                                            return false;
-                                        }}
-                                        fileList={fileList}
-                                        onPreview={handlePreview}
-                                        onChange={handleChange}
+                                    <Form.Item
+                                        label="UPLOAD A PICTURE"
+                                        name="upload"
+                                        rules={[
+                                            {
+                                            required: true,
+                                            },
+                                        ]}
                                     >
-                                        {fileList.length >= 1 ? null : uploadButton}
-                                    </Upload>
-                                </Form.Item>
-                                <Form.Item
-                                    label="RECIPIENTS"
-                                    name="recipients"
-                                    rules={[
-                                        {
-                                            required: true
-                                        },
-                                    ]}
+                                        <Upload
+                                            // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                                            action={`${HOST}/ipfs/upload`}
+                                            listType="picture-card"
+                                            beforeUpload={file => {
+                                                setFileList([file]);
+                                                return false;
+                                            }}
+                                            fileList={fileList}
+                                            onPreview={handlePreview}
+                                            onChange={handleChange}
+                                        >
+                                            {fileList.length >= 1 ? null : uploadButton}
+                                        </Upload>
+                                    </Form.Item>
+                                    <Form.Item
+                                        label="RECIPIENTS"
+                                        name="recipients"
+                                        rules={[
+                                            {
+                                                required: true
+                                            },
+                                        ]}
+                                    >
+                                        <TextArea 
+                                            placeholder={
+                                                [
+                                                    '0xABCDFA1DC112917c781942Cc01c68521c415e',
+                                                    '0x00192Fb10dF37c9FB26829eb2CC623cd1BF599E8',
+                                                    '0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c',
+                                                    '0xEA674fdDe714fd979de3EdF0F56AA9716B898ec8',
+                                                    '...',
+                                                    'use newline to split multiple addresses'
+                                                ].join('\n')
+                                            }
+                                            rows={10}
+                                        />
+                                    </Form.Item>
+                                    <Form.Item
+                                        label="CHOOSE CROWED PACK OF THE NFT"
+                                        name="pack"
+                                    >
+                                        {packOptions.length > 0 ? (
+                                            <Checkbox.Group
+                                                options={packOptions}
+                                                className="App__owners-packages"
+                                                onChange={(value) => form.setFields([{ value, name: 'pack' }])}
+                                            />
+                                        ) : <Spin />}
+                                    </Form.Item>
+                                    <Form.Item
+                                        label="CONFIRMATION DETAILS"
+                                        shouldUpdate={
+                                            (prevValues, curValues) =>
+                                                prevValues.pack !== curValues.pack
+                                                || prevValues.recipients !== curValues.recipients
+                                        }
+                                    >
+                                        {() => {
+                                            const num = getAllRecipients().length;
+                                            return (
+                                                <div>
+                                                    <div>0.001Matic/Per</div>
+                                                    <div>
+                                                        now you have select <span style={{ color: '#FF5733', fontWeight: 'bold' }}>{num}</span> address
+                                                    </div>
+                                                </div>
+                                            )
+                                        }}
+                                    </Form.Item>
+                                    <Form.Item>
+                                        <Button
+                                            type="primary"
+                                            htmlType="submit"
+                                            onClick={handlePay}
+                                        >
+                                            Pay
+                                        </Button>
+                                    </Form.Item>
+                                </Form>
+                                <Modal
+                                    visible={previewVisible}
+                                    title={previewTitle}
+                                    footer={null}
+                                    onCancel={handleCancel}
                                 >
-                                    <TextArea 
-                                        placeholder={`0xABCDFA1DC112917c781942Cc01c68521c415e
-0x00192Fb10dF37c9FB26829eb2CC623cd1BF599E8
-0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c
-0xEA674fdDe714fd979de3EdF0F56AA9716B898ec8
-...`}
-                                        rows={10}
-                                        onChange={handleTextAreaChange}
-                                    />
-                                </Form.Item>
-                                <Form.Item
-                                    label="CHOOSE CROWED PACK OF THE NFT"
-                                    name="pack"
-                                    rules={[
-                                        {
-                                            required: true
-                                        },
-                                    ]}
-                                >
-                                    {
-                                        topNFTs.length && (
-                                            <div className="App__owners-packages">
-                                                {topNFTs.map(item => OwnersPackage(item.key, item.image, item.nftOwners))}
-                                            </div>
-                                        )
-                                    }
-                                </Form.Item>
-                                <Form.Item
-                                    label="CONFIRMATION DETAILS"
-                                >
-                                    0.001Matic/Per
-                                </Form.Item>
-                                <Form.Item>
-                                    <Button type="primary" htmlType="submit" onClick={handlePay}>Pay</Button>
-                                </Form.Item>
-                            </Form>
-                            <Modal
-                                visible={previewVisible}
-                                title={previewTitle}
-                                footer={null}
-                                onCancel={handleCancel}
-                            >
-                                <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                            </Modal>
+                                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                                </Modal>
+                            </div>
                         </div>
-                    </div>
+                    </Spin>
                 </div>
                 : <div className="App__modal-content">
                     <div className="App__modal-title">
@@ -313,7 +277,6 @@ function StartModal(props) {
                     </div>
                 </div>
             }
-            
         </div>
     );
 }
