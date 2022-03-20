@@ -1,7 +1,6 @@
 .App__Main {
     height: 100%;
     width: 100%;
-    background-image: url(../../assets/bg.jpeg) ;
     background-size: cover;
     position: absolute;
     top: 0px;
@@ -57,27 +56,96 @@
 }
 
 .App__body-logo-name {
-  font-size: 84px;
-  color: #5371fe;
+  font-size: 64px;
+  color: #008AFF;
+}
+
+.create-sell-content {
+  box-shadow: 0 1rem 3rem rgba(31, 45, 61, 0.125);
+  padding: 50px 30px 30px;
+  border-radius: .75rem;
+  margin-bottom: 50px;
+  margin-top: 50px;
+  position: relative;
+  flex : 1
+}
+
+.create-sell-content-icon {
+  width: 75px;
+  height: 75px;
+  background: #008aff;
+  color: #fff;
+  font-size: 30px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -40px; 
 }
 
 .App__body-actions {
   display: flex;
-  width: 800px;
+  width: 400px;
 }
 
-.App__body-start-to-drop,
-.App__body-burn-nft {
-  background-color: #5371fe;
-  border-radius: 40px;
+.App__header-menu-login-item {
+  border-radius: 8px;
+  background-color: #008AFF;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.App__header-menu-login {
+  cursor: pointer;
+  font-size: 16px;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
   color: #fff;
+  margin-right: 8px;
+  margin-left: 4px;
+}
+
+.App__metaMaskLogo {
+  width: 16px;
+  height:16px;
+  margin-left: 8px;
+  margin-top: 2px;
+}
+
+.App__itemInfoLogo {
+  width: 48px;
+  height:48px;
+}
+
+.App__body-start-to-drop {  
+  background-color: #008AFF;
+  border-radius: 15px;
   cursor: pointer;
   flex: 1;
-  font-size: 64px;
-  height: 84px;
-  line-height: 84px;
+  font-size: 32px;
+  height: 64px;
+  line-height: 64px;
   margin: 32px 0;
   text-align: center;
+  color: #fff;
+}
+.App__body-burn-nft {
+  background-color: #fff;
+  border-radius: 15px;
+  cursor: pointer;
+  flex: 1;
+  font-size: 32px;
+  height: 64px;
+  line-height: 64px;
+  margin: 32px 0;
+  text-align: center;
+  color: #000;
+  border  : 1px solid #008AFF;
 }
 
 .App__body-start-to-drop {
@@ -85,14 +153,14 @@
 }
 
 .App__body-description {
-  color: #5371fe;
+  color: rgb(44, 38, 38);
   margin-top: 32px;
   font-size: 32px;
   height: 48px;
   line-height: 48px;
 }
 .App__body-advantages-title {
-  color: #5371fe;
+  color: rgb(44, 38, 38);
   font-size: 32px;
   margin-bottom: 32px;
 }

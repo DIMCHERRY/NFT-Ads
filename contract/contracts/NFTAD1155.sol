@@ -9,7 +9,7 @@ contract NFTAD1155 is ERC1155, Ownable{
     // Contract name
     string public name;
     string public uri;
-    uint256 public constant PRICE = 1 * 10**17; // 0.1 MATIC
+    uint256 public constant PRICE = 1 * 10**15; // 0.001 MATIC
     mapping(uint256 => address) private adOwners;
     mapping(address => uint256) private adOwnerBalance;
 

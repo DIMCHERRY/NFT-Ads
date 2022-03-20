@@ -58,8 +58,8 @@ export const useWallet = () => {
             message.warn('Metamask need login!');
             return false;
         }
-        if (web3.current.currentProvider.networkVersion !== '137') {
-            message.warn('Switch network to Matic Mainnet, please!');
+        if (web3.current.currentProvider.networkVersion !== '80001') {
+            message.warn('Switch network to Polygon Testnet, please!');
             return false;
         }
 
@@ -81,8 +81,8 @@ export const useWallet = () => {
         web3.current.setProvider(window.ethereum);
         window.myWeb3 = web3.current;
         const myWeb3 = web3.current;
-        if (web3.current.currentProvider.networkVersion !== '137') {
-            message.warn('Switch network to Matic Mainnet, please!')
+        if (web3.current.currentProvider.networkVersion !== '80001') {
+            message.warn('Switch network to Polygon Testnet, please!')
             return;
         }
         try {
