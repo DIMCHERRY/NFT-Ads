@@ -63,21 +63,33 @@
 
 .App__body-actions {
   display: flex;
-  width: 800px;
+  width: 400px;
 }
 
-.App__body-start-to-drop,
-.App__body-burn-nft {
-  background-color: #5371fe;
-  border-radius: 40px;
-  color: #fff;
+.App__body-start-to-drop {  
+  background-color: #008AFF;
+  border-radius: 15px;
   cursor: pointer;
   flex: 1;
-  font-size: 64px;
-  height: 84px;
-  line-height: 84px;
+  font-size: 32px;
+  height: 64px;
+  line-height: 64px;
   margin: 32px 0;
   text-align: center;
+  color: #fff;
+}
+.App__body-burn-nft {
+  background-color: #fff;
+  border-radius: 15px;
+  cursor: pointer;
+  flex: 1;
+  font-size: 32px;
+  height: 64px;
+  line-height: 64px;
+  margin: 32px 0;
+  text-align: center;
+  color: #000;
+  border  : 1px solid #008AFF;
 }
 
 .App__body-start-to-drop {

@@ -100,10 +100,10 @@ function Main() {
                 </div>
                 <div className="App__body-actions">
                     <div className="App__body-start-to-drop" onClick={clickStartToDrop}>
-                        Airdrop Ads
+                        Explore
                     </div>
                     <div className="App__body-burn-nft" onClick={clickToBurn}>
-                        Get rewards
+                        Create
                     </div>
                 </div>
                 <div className="App__body-advantages">
