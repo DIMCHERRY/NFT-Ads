@@ -4,6 +4,9 @@ import { ExclamationCircleOutlined, PlusOutlined }  from '@ant-design/icons';
 import './index.css';
 import logo from '../../assets/logo.png';
 import metaMaskLogo from '../../assets/metamask.png';
+import cryptoLogo from '../../assets/crypton.png';
+import analysisLogo from '../../assets/analysis.png'
+import lowpriceLogo from '../../assets/lowprice.png'
 import AboutModal from '../../components/AboutModal';
 import StartModal from '../../components/StartModal';
 import BurnModal from  '../../components/BurnModal';
@@ -114,7 +117,7 @@ function Main() {
                     <div className="App__body-advantages-content">
                     <div className="create-sell-content">
                         <div className="create-sell-content-icon">
-                            <i className="bi bi-shield-check"></i>
+                         <img src={lowpriceLogo} className="App__itemInfoLogo" alt="lowpriceLogo" />
                         </div>
                          <div>
                             <h4>Lower Cost </h4>
@@ -126,7 +129,7 @@ function Main() {
 
                     <div className="create-sell-content">
                         <div className="create-sell-content-icon">
-                            <i className="bi bi-shield-check"></i>
+                            <img src={analysisLogo} className="App__itemInfoLogo" alt="analysisLogo" />
                         </div>
                          <div>
                             <h4>Verifiable Results</h4>
@@ -138,7 +141,7 @@ function Main() {
 
                     <div className="create-sell-content">
                         <div className="create-sell-content-icon">
-                            <i className="bi bi-shield-check"></i>
+                            <img src={cryptoLogo} className="App__itemInfoLogo" alt="cryptoLogo" />
                         </div>
                          <div>
                             <h4>Crypto Native</h4>
