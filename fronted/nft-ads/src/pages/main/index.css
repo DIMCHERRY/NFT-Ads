@@ -1,7 +1,6 @@
 .App__Main {
     height: 100%;
     width: 100%;
-    background-image: url(../../assets/bg.jpeg) ;
     background-size: cover;
     position: absolute;
     top: 0px;
@@ -57,8 +56,33 @@
 }
 
 .App__body-logo-name {
-  font-size: 84px;
-  color: #5371fe;
+  font-size: 64px;
+  color: #008AFF;
+}
+
+.create-sell-content {
+  box-shadow: 0 1rem 3rem rgba(31, 45, 61, 0.125);
+  padding: 50px 30px 30px;
+  border-radius: .75rem;
+  margin-bottom: 50px;
+  margin-top: 50px;
+  position: relative;
+  flex : 1
+}
+
+.create-sell-content-icon {
+  width: 75px;
+  height: 75px;
+  background: #008aff;
+  color: #fff;
+  font-size: 30px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -40px; 
 }
 
 .App__body-actions {
@@ -97,14 +121,14 @@
 }
 
 .App__body-description {
-  color: #5371fe;
+  color: rgb(44, 38, 38);
   margin-top: 32px;
   font-size: 32px;
   height: 48px;
   line-height: 48px;
 }
 .App__body-advantages-title {
-  color: #5371fe;
+  color: rgb(44, 38, 38);
   font-size: 32px;
   margin-bottom: 32px;
 }
