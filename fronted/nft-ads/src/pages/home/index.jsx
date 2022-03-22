@@ -10,10 +10,9 @@ import lowpriceLogo from '../../assets/lowprice.png'
 import AboutModal from '../../components/AboutModal';
 import StartModal from '../../components/StartModal';
 import BurnModal from  '../../components/BurnModal';
-import { handleAddress } from "../../util/util";
+import { handleAddress, handleError } from "../../util/util";
 import { post } from '../../network';
 import { useWallet } from "../../hooks/useWallet";
-import { message } from "antd";
 
 const Home = () => {
     const [isBurnModalVisible, setIsBurnModalVisible] = useState(false);
@@ -60,8 +59,7 @@ const Home = () => {
             }
             await post('/login/token', { address, nounce, signedNounce, user_data: {} });
         } catch (error) {
-            message.warn(error.message);
-            console.error(error);
+            handleError(error, 'login');
         }
     }
 

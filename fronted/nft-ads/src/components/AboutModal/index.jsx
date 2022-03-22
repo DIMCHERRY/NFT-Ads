@@ -21,7 +21,7 @@ function AboutModal (props) {
                     </span>
                 </div>
                 <div className="App__modal-body">
-                    <img className="App__about-modal-logo" src={logo} />
+                    <img className="App__about-modal-logo" src={logo} alt="logo" />
                     <div className="App__about-modal-content-description">
                         {data.description}
                     </div>

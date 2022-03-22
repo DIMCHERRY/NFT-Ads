@@ -1,32 +1,16 @@
 import React, { useState } from "react";
-import { Upload, Modal, Form, Input, Button, Checkbox, Spin, message } from 'antd';
+import { Upload, Modal, Form, Input, Button, Checkbox, Spin } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import axios from 'axios';
 import { ethers } from "ethers";
 import NAFTADABI from "../../abi/NFTAD.json"
 
 import { closeIcon } from "../../assets/icons";
-import { post, HOST } from '../../network';
+import { post } from '../../network';
 import useTopNFTs from '../../hooks/useTopNFTs';
+import { DropDefaultDescription } from '../../util/constant';
+import { handleError, getBase64 } from '../../util/util';
 
 import './index.css';
-
-function getBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-}
-
-const uploadButton = (
-    <div>
-        <PlusOutlined />
-        <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-);
 
 function StartModal(props) {
     const { handleClose, address, validateMetamask } = props;
@@ -34,10 +18,8 @@ function StartModal(props) {
     const [previewVisible, setPreviewVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
-    const [fileList, setFileList] = useState([]);
     const { TextArea } = Input;
     const { topNFTs } = useTopNFTs();
-    const [tokenId, setTokenId] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleCancel = () => {
@@ -54,49 +36,37 @@ function StartModal(props) {
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
 
-    const handleChange = ({ fileList }) => {
-        setFileList(fileList);
-        getIpfs(fileList);
+    const uploadIpfs = async file => {
+        const blob =  await (await fetch(file)).blob();
+        const data = new FormData();
+        data.append('file', blob);
+        const res = await post(
+            "https://ipfs.infura.io:5001/api/v0/add?pin=false",
+            data,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            })
+            .catch(error => handleError(error, 'ipfs upload'));
+        return res.data;
     };
-
-    const getIpfs = async (fileList) => {
-        // Save file input to IPFS
-        if (fileList.length > 0) {
-            const file = fileList[0];
-            const blob =  await (await fetch(file)).blob();
-            const data = new FormData();
-            data.append('file', blob);
+    const addRecord = async ({ imgUrl, description }) => {
+        const uploadUrl = `/api/tokens/`;
+        try {
             const res = await post(
-                "https://ipfs.infura.io:5001/api/v0/add?pin=false",
-                data,
+                uploadUrl,
                 {
-                    headers: {
-                        "Content-Type": "multipart/form-data"
-                    }
-                })
-                .catch(error => {
-                    console.error('ipfs upload error:', error);
-                    message.error(error.message);
-                });
-            handleUpload(`https://ipfs.infura.io:5001/api/v0/cat?arg=${res.data.Hash}`)
+                    "image_url": imgUrl,
+                    description: description
+                },
+                { headers: { address } }
+            );
+            return res.data.data.id;
+        } catch (error) {
+            handleError(error, 'upload');
         }
-    }
-
-    const handleUpload = (imageUrl) => {
-        const uploadUrl = `${HOST}/api/tokens/`;
-
-        axios.post(uploadUrl, {
-            "image_url": imageUrl
-        })
-        .then(res => {
-            setTokenId(res.data.data.id);
-            console.log(res.data.data.id);
-        })
-        .catch(error => {
-            console.error('upload error:', error);
-            message.error(error.message);
-        });
-    }
+    };
 
     const packOptions = topNFTs.map(({ key, nftOwners, image }) => {
         return {
@@ -118,6 +88,12 @@ function StartModal(props) {
         }
         try {
             setLoading(true);
+            const { upload, description } = await form.validateFields();
+            const [file] = upload;
+            const uploadRes = await uploadIpfs(file);
+            const imgUrl = `https://ipfs.infura.io:5001/api/v0/cat?arg=${uploadRes.Hash}`;
+            const tokenId = await addRecord({ imgUrl, description });
+
             const NFTADAddress = "0x20E156f53E6F823e92FFEDA7eDf7B55188223F95";
             const allRecipients = getAllRecipients();
             const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -129,14 +105,12 @@ function StartModal(props) {
                 value,
                 gasLimit: 1000000
             };
-            debugger
             await NFTADContract.mintToMany(allRecipients, tokenId, 1, options);
 
             alert('Success!');
             handleClose();
         } catch (error) {
-            console.error('pay error:', error);
-            message.error(error.message);
+            handleError(error, 'pay');
         } finally {
             setLoading(false);
         }
@@ -163,29 +137,25 @@ function StartModal(props) {
                                     form={form}
                                     layout="vertical"
                                     initialValues={{ pack: [], recipients: '' }}
+                                    onFinish={handlePay}
                                 >
                                     <Form.Item
                                         label="UPLOAD A PICTURE"
                                         name="upload"
-                                        rules={[
-                                            {
-                                            required: true,
-                                            },
-                                        ]}
+                                        valuePropName="fileList"
+                                        getValueFromEvent={e => Array.isArray(e) ? e : e?.fileList}
+                                        rules={[{ required: true }]}
                                     >
                                         <Upload
-                                            // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                                            action={`${HOST}/ipfs/upload`}
+                                            maxCount={1}
                                             listType="picture-card"
-                                            beforeUpload={file => {
-                                                setFileList([file]);
-                                                return false;
-                                            }}
-                                            fileList={fileList}
+                                            beforeUpload={() => false}
                                             onPreview={handlePreview}
-                                            onChange={handleChange}
                                         >
-                                            {fileList.length >= 1 ? null : uploadButton}
+                                            <div>
+                                                <PlusOutlined />
+                                                <div style={{ marginTop: 8 }}>Upload</div>
+                                            </div>
                                         </Upload>
                                     </Form.Item>
                                     <Form.Item
@@ -197,7 +167,7 @@ function StartModal(props) {
                                             },
                                         ]}
                                     >
-                                        <TextArea 
+                                        <TextArea
                                             placeholder={
                                                 [
                                                     '0xABCDFA1DC112917c781942Cc01c68521c415e',
@@ -224,6 +194,15 @@ function StartModal(props) {
                                         ) : <Spin />}
                                     </Form.Item>
                                     <Form.Item
+                                        label="DESCRIPTION"
+                                        name="description"
+                                    >
+                                        <TextArea
+                                            placeholder={DropDefaultDescription}
+                                            rows={8}
+                                        />
+                                    </Form.Item>
+                                    <Form.Item
                                         label="CONFIRMATION DETAILS"
                                         shouldUpdate={
                                             (prevValues, curValues) =>
@@ -244,11 +223,7 @@ function StartModal(props) {
                                         }}
                                     </Form.Item>
                                     <Form.Item>
-                                        <Button
-                                            type="primary"
-                                            htmlType="submit"
-                                            onClick={handlePay}
-                                        >
+                                        <Button type="primary" htmlType="submit">
                                             Pay
                                         </Button>
                                     </Form.Item>

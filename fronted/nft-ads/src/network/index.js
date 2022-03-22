@@ -9,5 +9,6 @@ const myAxios = axios.create({
 
 export const get = myAxios.get;
 export const post = myAxios.post;
+export const put = myAxios.put;
 
 export default myAxios;
