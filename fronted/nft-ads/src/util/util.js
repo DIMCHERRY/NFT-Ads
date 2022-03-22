@@ -1,3 +1,5 @@
+import { message } from 'antd';
+
 const handleAddress = (address) => {
     return address.substr(0,6)+'...'+ address.substr(address.length - 6);
 }
@@ -16,5 +18,19 @@ const getNFTOwners = async (address) => {
     return owners;
 }
 
+export const handleError = (error, errorStep) => {
+    console.error(`${errorStep} error:`, error);
+    message.error(error.message);
+};
+
+export const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
 
 export { handleAddress, getNFTOwners };

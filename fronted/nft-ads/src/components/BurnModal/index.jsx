@@ -4,6 +4,7 @@ import './index.css';
 import { Button } from 'antd';
 import { ethers } from "ethers";
 import React from 'react';
+import { handleError } from "../../util/util";
 
 function BurnModal (props) {
     const { handleClose } = props;
@@ -24,7 +25,7 @@ function BurnModal (props) {
             handleClose();
             await tx.wait();
           } catch (error) {
-            console.error(error);
+            handleError(error, 'confirm burn');
         }
     }
 

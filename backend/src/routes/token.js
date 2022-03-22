@@ -96,8 +96,8 @@ router.get('/tokens/:id/', async (req, res) => {
 const default_description = "Ready to explore the wide world of Web3?\n Join us February 3rd - 8th for Road to Web3, one week of hacking and workshops devoted to NFTs, Gaming, Audio/Video, and all things Web3.\n ETHGlobal has teamed up with Polygon to build the ultimate online hackathon experience—all we need is you!\nWebsite: https://web3.ethglobal.com/ (Plus:If you join our hackathon, you can visit https://nftads.info/ to get rewards)";
 // side : "buy" | "sell"
 router.post('/tokens/', async (req, res) => {
-    const image_url = req.body.image_url;
-    let address = req.header("Adress");
+    const { image_url, description = default_description } = req.body;
+    let address = req.header("Address");
     console.log("submit token for image_url : " + image_url + " FROM Adress: ", address);
     if (image_url == undefined) {
         res.status(502).json({
@@ -110,14 +110,13 @@ router.post('/tokens/', async (req, res) => {
     if (address == undefined) {
         address = '';
     }
-    let resp = {}
     try {
-        mysqlConn.insertOneToken(image_url, address, default_description);
+        mysqlConn.insertOneToken(image_url, address, description);
         let id = await mysqlConn.queryTokenByIMGURLAsync(image_url);
         res.status(200).json({
             errorCode: 0,
             errorMsg: 'success',
-            data: {id:id}
+            data: { id }
         })
     } catch(e) {
         console.log(e.message)

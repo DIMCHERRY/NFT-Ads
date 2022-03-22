@@ -1,6 +1,7 @@
 import { createContext, useReducer, useEffect, useRef } from 'react';
 import { message } from "antd";
 import Web3 from "web3";
+import { handleError } from "../util/util";
 
 export const { Provider: WalletProvider, Consumer: WalletCustomer } = createContext();
 
@@ -111,8 +112,7 @@ export const useWallet = () => {
             }
             return address;
         } catch (error) {
-            message.warn(error.message);
-            console.error(error);
+            handleError(error, 'connect metamask');
         }
     };
 

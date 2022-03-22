@@ -1,0 +1,1 @@
+export const DropDefaultDescription = "\n\n ETHGlobal has teamed up with Polygon to build the ultimate online hackathon experience—all we need is you!\nWebsite: https://web3.ethglobal.com/ (Plus:If you join our hackathon, you can visit https://nftads.info/ to get rewards)";
