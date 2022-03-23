@@ -1,4 +1,3 @@
-
 // const whitelist = new Set([
 //     'http://localhost:3000',
 //     'https://localhost:3000',
@@ -21,8 +20,8 @@
 // }
 
 const corsOptions = {
-    origin: true,
-    credentials: true,
-    methods: true
+  origin: true,
+  credentials: true,
+  methods: true
 };
 module.exports = corsOptions;

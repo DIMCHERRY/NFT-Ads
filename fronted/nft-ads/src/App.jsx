@@ -1,9 +1,9 @@
-import './App.css';
-import React from 'react';
+import "./App.css";
+import React from "react";
 import { BrowserRouter as Router, Route, Redirect, Switch } from "react-router-dom";
 import Loadable from "react-loadable";
 import { Spin } from "antd";
-import Header from './components/Header';
+import Header from "./components/Header";
 
 function App() {
   return (
