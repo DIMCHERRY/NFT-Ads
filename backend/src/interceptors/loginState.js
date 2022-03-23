@@ -2,11 +2,12 @@
 const Debug = require('debug');
 const debug = Debug('validateLogin');
 
-const NEED_LOGIN_URL = new Set([
-    '/test/login'
-]);
+const NEED_LOGIN_URL = [
+    '/test/login',
+    '/api/tokens'
+];
 const isNeedLogin = url => {
-    if (NEED_LOGIN_URL.has(url)) {
+    if (NEED_LOGIN_URL.some(p => url.startsWith(p))) {
         return true;
     }
     return false;

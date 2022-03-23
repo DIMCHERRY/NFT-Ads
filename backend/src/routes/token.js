@@ -52,6 +52,47 @@ router.get('/tokens/', async (req, res) => {
     }
 })
 
+router.get('/tokens/page/:page/pageSize/:pageSize/', async (req, res) => {
+    const address = req.header("Address");
+    if (!address) {
+        res.status(401).json({
+            errorMsg: 'need login'
+        });
+        return;
+    }
+    const page = Number(req.params.page) || 1;
+    const pageSize = Number(req.params.pageSize) || 10;
+    if (!Boolean(page) || !Boolean(pageSize)) {
+        res.status(401).json({
+            errorMsg: 'invalid params'
+        });
+        return;
+    }
+    try {
+        const tokens = await mysqlConn.queryTokensByAddress(address, pageSize, (page - 1) * pageSize);
+        const total = await mysqlConn.queryTokensCountByAddress(address);
+        res.status(200).json({
+            total,
+            tokens: tokens.map(item => ({
+                imgUrl: item.img_ipfs_url,
+                tokenId: item.id,
+                createAt: item.created_at,
+                description: item.description,
+                address
+            }))
+        });
+        return;
+    } catch (e) {
+        console.log(e.message);
+        res.status(502).json({
+            errorCode: 1,
+            errorMsg: e.message,
+            data:[]
+        })
+        return;
+    }
+})
+
 async function queryTokenByID(tokenID) {
     return new Promise((resolve, reject) => {
         mysqlConn.queryTokenByID(tokenID, (content, image_url) => {
@@ -161,8 +202,6 @@ router.post('/upload', async (req, res) => {
 
 router.get('/file/:fileName', async (req, res) => {
     const fileName = req.params.fileName;
-    console.log('process.env.NODE_ENV', process.env.NODE_ENV);
-    res.header('x-node-env', process.env.NODE_ENV);
     const filePath = path.join(uploadDir, fileName);
     if (!fs.existsSync(filePath)) {
         res.status(404).json({
