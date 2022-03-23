@@ -5,7 +5,7 @@ import { ethers } from "ethers";
 import NAFTADABI from "../../abi/NFTAD.json"
 
 import { closeIcon } from "../../assets/icons";
-import { post } from '../../network';
+import { post, HOST } from '../../network';
 import useTopNFTs from '../../hooks/useTopNFTs';
 import { DropDefaultDescription } from '../../util/constant';
 import { handleError, getBase64 } from '../../util/util';
@@ -36,12 +36,12 @@ function StartModal(props) {
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
 
-    const uploadIpfs = async file => {
-        const blob =  await (await fetch(file)).blob();
+    const uploadFile = async file => {
         const data = new FormData();
-        data.append('file', blob);
+        data.append('file', file);
+        data.append('fileName', file.name);
         const res = await post(
-            "https://ipfs.infura.io:5001/api/v0/add?pin=false",
+            '/api/upload',
             data,
             {
                 headers: {
@@ -49,8 +49,9 @@ function StartModal(props) {
                 }
             })
             .catch(error => handleError(error, 'ipfs upload'));
-        return res.data;
+        return res.data.fileName;
     };
+
     const addRecord = async ({ imgUrl, description }) => {
         const uploadUrl = `/api/tokens/`;
         try {
@@ -90,8 +91,8 @@ function StartModal(props) {
             setLoading(true);
             const { upload, description } = await form.validateFields();
             const [file] = upload;
-            const uploadRes = await uploadIpfs(file);
-            const imgUrl = `https://ipfs.infura.io:5001/api/v0/cat?arg=${uploadRes.Hash}`;
+            const uploadRes = await uploadFile(file.originFileObj);
+            const imgUrl = `${HOST}/api/file/${uploadRes}`;
             const tokenId = await addRecord({ imgUrl, description });
 
             const NFTADAddress = "0x20E156f53E6F823e92FFEDA7eDf7B55188223F95";
@@ -148,6 +149,7 @@ function StartModal(props) {
                                     >
                                         <Upload
                                             maxCount={1}
+                                            accept=".png,.jpg,.jpeg,.bmp,.svg,.svgz,.webp,.gif,.tif,.ico"
                                             listType="picture-card"
                                             beforeUpload={() => false}
                                             onPreview={handlePreview}

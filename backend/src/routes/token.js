@@ -1,7 +1,11 @@
 const express = require('express')
 const mysqlConn = require("../services/mysql")
 const router = express.Router();
-
+const multiparty = require('multiparty');
+const { uploadDir } = require('../utils/constant');
+const crypto = require('crypto');
+const fs = require('fs-extra');
+const path = require('path');
 
 router.post('/signup/:address/', async (req, res) => {
     const address = req.params.address
@@ -128,5 +132,47 @@ router.post('/tokens/', async (req, res) => {
         return;
     }
 })
+
+router.post('/upload', async (req, res) => {
+    const form = new multiparty.Form();
+    form.on('part', async function (part) {
+
+        if (part.filename) {
+            const suffix = part.filename.split('.').length >= 2 ? part.filename.split('.').pop() : ''
+            const fileName = `${crypto.randomBytes(8).toString('hex')}${suffix && '.' + suffix}`;
+            const writeStrem = fs.createWriteStream(path.join(uploadDir, fileName));
+            part.pipe(writeStrem);
+            part.on('error', (err) => {
+                console.log('part error', err);
+                writeStrem.destroy();
+                res.status(500).json({
+                    errorCode: 1,
+                    errorMsg: err.message,
+                    data:{}
+                });
+            });
+            part.on('end', () => {
+                res.status(200).json({ fileName });
+            });
+        }
+    });
+    form.parse(req);
+});
+
+router.get('/file/:fileName', async (req, res) => {
+    const fileName = req.params.fileName;
+    console.log('process.env.NODE_ENV', process.env.NODE_ENV);
+    res.header('x-node-env', process.env.NODE_ENV);
+    const filePath = path.join(uploadDir, fileName);
+    if (!fs.existsSync(filePath)) {
+        res.status(404).json({
+            errorCode: 1,
+            errorMsg: 'file not found',
+            data:{}
+        });
+        return;
+    }
+    res.download(filePath);
+});
 
 module.exports = router
