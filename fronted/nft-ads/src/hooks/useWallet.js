@@ -68,7 +68,7 @@ export const useWallet = () => {
     };
 
     const changeAddress = (address) => dispatch({ type: 'address', payload: address });
-    const changeNetVersion = (networkVersion) => dispatch({ type: 'networkVersion', payload: networkVersion });
+    const changeNetVersion = (networkVersion) => dispatch({ type: 'networkVersion', payload: Number(networkVersion) });
     // const changeIsMatemask = (isMetaMask) => dispatch({ type: 'isMatemask', payload: isMetaMask });
     const disconnectMetamask = () => {
         dispatch({ type: 'init', payload: {} });
@@ -124,7 +124,7 @@ export const useWallet = () => {
             }
         })
         web3.current.currentProvider.on('accountsChanged', changeAddress);
-        web3.current.currentProvider.on('networkChanged', changeNetVersion);
+        web3.current.currentProvider.on('chainChanged', changeNetVersion);
     }, []);
 
     return { walletState, validateMetamask, web3, connectMetamask, disconnectMetamask }

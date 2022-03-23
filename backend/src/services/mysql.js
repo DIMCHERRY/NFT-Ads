@@ -72,6 +72,17 @@ class Mysql {
         return rows[0].id;
     }
 
+    async queryTokensByAddress(_address, limit, offset) {
+        let [rows, fields] = await this.connection.promise().query(`SELECT id, creator_address, img_ipfs_url, description, created_at FROM t_tokens where creator_address = ? LIMIT ${limit} OFFSET ${offset}`, [_address]);
+        return rows;
+    }
+
+    async queryTokensCountByAddress(_address) {
+        // let [rows, fields] = await this.connection.promise().query('SELECT COUNT(*) FROM t_tokens where creator_address = ?', [_address]);
+        const [res] = await this.connection.promise().query('SELECT COUNT(*) FROM t_tokens where creator_address = ?', [_address]);
+        return res[0]['COUNT(*)'];
+    }
+
     async queryTokenByIMGURLAsync(img_ipfs_url) {
         let [rows, fields] = await this.connection.promise().query('SELECT id, img_ipfs_url FROM t_tokens where img_ipfs_url = ?', [img_ipfs_url]);
         if (rows.length == 0) {
