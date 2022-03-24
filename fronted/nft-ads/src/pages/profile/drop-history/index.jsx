@@ -54,14 +54,9 @@ const DropHistory = () => {
           const percent = Math.floor(Math.random() * 100);
           return (
             <Card
-              style={{
-                width: 300,
-                margin: "1rem",
-                boxShadow: "0 1rem 1rem rgb(31 45 61 / 13%)"
-              }}
-              // style={{ width: 300 }}
+              className="drop-list-card-wrapper"
               key={item.tokenId}
-              cover={<img alt={item.tokenId} src={item.imgUrl} />}
+              cover={<img alt={item.tokenId} src={item.imgUrl} className="drop-record-img" />}
               // actions={[
               //     <SettingOutlined key="setting" />,
               //     <EditOutlined key="edit" />,
@@ -79,18 +74,11 @@ const DropHistory = () => {
                 avatar={<Avatar src="/favicon.png" />}
                 title={handleAddress(item.address)}
                 description={
-                  <Popover content={item.description} placement="topLeft">
-                    <div
-                      className="drop-list-description"
-                      style={{
-                        whiteSpace: "nowrap",
-                        textOverflow: "ellipsis",
-                        overflow: "hidden",
-                        cursor: "default"
-                      }}
-                    >
-                      {item.description}
-                    </div>
+                  <Popover
+                    content={<div className="drop-list-description-detail">{item.description}</div>}
+                    placement="topLeft"
+                  >
+                    <div className="drop-list-description">{item.description}</div>
                   </Popover>
                 }
               />
@@ -98,13 +86,7 @@ const DropHistory = () => {
           );
         })}
       </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-start",
-          padding: "2rem 4rem"
-        }}
-      >
+      <div className="drop-list-pagination">
         <Pagination
           showSizeChanger
           current={page}
