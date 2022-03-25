@@ -13,7 +13,6 @@ import "./index.css";
 
 const Header = () => {
   const history = useHistory();
-  console.log("history", history);
   const [isAboutModalVisible, setIsAboutModalVisible] = useState(false);
   const { walletState, web3, connectMetamask, disconnectMetamask } = useWallet();
   const { address } = walletState;

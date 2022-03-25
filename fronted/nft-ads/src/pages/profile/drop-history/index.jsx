@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { get } from "../../../network";
-import { Pagination, Card, Avatar, Spin, Popover, message, Progress } from "antd";
+import { Pagination, Card, Avatar, Spin, Popover, message, Progress, Empty } from "antd";
 // import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
 import { useWallet } from "../../../hooks/useWallet";
 import { handleError, handleAddress } from "../../../util/util";
@@ -86,20 +86,24 @@ const DropHistory = () => {
           );
         })}
       </div>
-      <div className="drop-list-pagination">
-        <Pagination
-          showSizeChanger
-          current={page}
-          total={total}
-          pageSize={pageSize}
-          pageSizeOptions={[4, 8, 12, 16, 20]}
-          onChange={(page, pageSize) => {
-            setPage(page);
-            setPageSize(pageSize);
-            getDropList(page, pageSize, address);
-          }}
-        />
-      </div>
+      {dropList.length > 0 ? (
+        <div className="drop-list-pagination">
+          <Pagination
+            showSizeChanger
+            current={page}
+            total={total}
+            pageSize={pageSize}
+            pageSizeOptions={[4, 8, 12, 16, 20]}
+            onChange={(page, pageSize) => {
+              setPage(page);
+              setPageSize(pageSize);
+              getDropList(page, pageSize, address);
+            }}
+          />
+        </div>
+      ) : (
+        <Empty />
+      )}
     </Spin>
   );
 };

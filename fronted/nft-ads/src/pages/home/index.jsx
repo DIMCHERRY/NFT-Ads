@@ -4,27 +4,19 @@ import cryptoLogo from "../../assets/crypton.png";
 import analysisLogo from "../../assets/analysis.png";
 import lowpriceLogo from "../../assets/lowprice.png";
 import StartModal from "../../components/StartModal";
-import BurnModal from "../../components/BurnModal";
+import { useHistory } from "react-router-dom";
 import { useWallet } from "../../hooks/useWallet";
 
 const Home = () => {
-  const [isBurnModalVisible, setIsBurnModalVisible] = useState(false);
+  const history = useHistory();
   const [isStartModalVisible, setIsStartModalVisible] = useState(false);
 
   const clickStartToDrop = () => {
     setIsStartModalVisible(true);
   };
 
-  const clickToBurn = () => {
-    setIsBurnModalVisible(true);
-  };
-
   const handleStartModalClose = () => {
     setIsStartModalVisible(false);
-  };
-
-  const handleBurnModalClose = () => {
-    setIsBurnModalVisible(false);
   };
 
   const { walletState, validateMetamask } = useWallet();
@@ -36,10 +28,10 @@ const Home = () => {
       <div className="App__body-description">an AD delivery tool for Web3 users.</div>
       <div className="App__body-actions">
         <div className="App__body-start-to-drop" onClick={clickStartToDrop}>
-          Explore
-        </div>
-        <div className="App__body-burn-nft" onClick={clickToBurn}>
           Create
+        </div>
+        <div className="App__body-burn-nft" onClick={() => history.push("/explore")}>
+          Explore
         </div>
       </div>
       <div className="App__body-advantages">
@@ -67,9 +59,9 @@ const Home = () => {
             <div>
               <h4>Verifiable Results</h4>
               <p>
-                <b>Each wallet address is open and transparent for every people.</b>This is
-                different from the operations of Web2 ADs which are in the black box by AI matching
-                so that people may feel difficult to measure the effect of advertising.
+                <b>Each wallet address is open and transparent for every people.</b>
+                This is different from the operations of Web2 ADs which are in the black box by AI
+                matching so that people may feel difficult to measure the effect of advertising.
               </p>
             </div>
           </div>
@@ -99,7 +91,6 @@ const Home = () => {
         validateMetamask={validateMetamask}
         address={address}
       />
-      <BurnModal isModalVisible={isBurnModalVisible} handleClose={handleBurnModalClose} />
     </div>
   );
 };

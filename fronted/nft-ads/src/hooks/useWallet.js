@@ -1,26 +1,9 @@
-import { createContext, useReducer, useEffect, useRef } from "react";
+import { createContext, useReducer, useEffect, useRef, useContext } from "react";
 import { message } from "antd";
 import Web3 from "web3";
 import { handleError } from "../util/util";
 
-export const { Provider: WalletProvider, Consumer: WalletCustomer } = createContext();
-
-const handleDispatch = (state, action) => {
-  switch (action.type) {
-    case "init":
-      return action.payload;
-    case "address":
-      return { ...state, address: Array.isArray(action.payload) ? action.payload[0] : undefined };
-    case "networkVersion":
-      return { ...state, networkVersion: action.payload };
-    case "isMetaMask":
-      return { ...state, isMetaMask: action.payload };
-    default:
-      throw new Error("invalid action type for WalletContext");
-  }
-};
-
-export const useWallet = () => {
+const useWalletReducer = () => {
   const web3 = useRef(null);
 
   const getInitialState = () => {
@@ -39,7 +22,21 @@ export const useWallet = () => {
     };
   };
 
-  const [walletState, dispatch] = useReducer(handleDispatch, getInitialState());
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case "init":
+        return action.payload;
+      case "address":
+        return { ...state, address: Array.isArray(action.payload) ? action.payload[0] : undefined };
+      case "networkVersion":
+        return { ...state, networkVersion: action.payload };
+      case "isMetaMask":
+        return { ...state, isMetaMask: action.payload };
+      default:
+        throw new Error("invalid action type for WalletContext");
+    }
+  };
+  const [walletState, dispatch] = useReducer(reducer, getInitialState());
 
   const validateMetamask = async () => {
     if (typeof window.ethereum !== "object") {
@@ -128,4 +125,18 @@ export const useWallet = () => {
   }, []);
 
   return { walletState, validateMetamask, web3, connectMetamask, disconnectMetamask };
+};
+
+export const WalletContext = createContext();
+export const useWallet = () => useContext(WalletContext);
+export const WalletProvider = ({ children }) => {
+  const { walletState, validateMetamask, web3, connectMetamask, disconnectMetamask } =
+    useWalletReducer();
+  return (
+    <WalletContext.Provider
+      value={{ walletState, validateMetamask, web3, connectMetamask, disconnectMetamask }}
+    >
+      <WalletContext.Consumer>{children}</WalletContext.Consumer>
+    </WalletContext.Provider>
+  );
 };

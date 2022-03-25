@@ -50,6 +50,40 @@ router.get("/tokens/", async (req, res) => {
   }
 });
 
+router.get("/tokens/all/page/:page/pageSize/:pageSize/", async (req, res) => {
+  const page = Number(req.params.page) || 1;
+  const pageSize = Number(req.params.pageSize) || 10;
+  if (!Boolean(page) || !Boolean(pageSize)) {
+    res.status(400).json({
+      errorMsg: "invalid params"
+    });
+    return;
+  }
+  try {
+    const tokens = await mysqlConn.queryAllTokens(pageSize, (page - 1) * pageSize);
+    const total = await mysqlConn.queryAllTokensCount();
+    res.status(200).json({
+      total,
+      tokens: tokens.map((item) => ({
+        imgUrl: item.img_ipfs_url,
+        tokenId: item.id,
+        createAt: item.created_at,
+        description: item.description,
+        address: item.creator_address
+      }))
+    });
+    return;
+  } catch (e) {
+    console.log(e.message);
+    res.status(502).json({
+      errorCode: 1,
+      errorMsg: e.message,
+      data: []
+    });
+    return;
+  }
+});
+
 router.get("/tokens/page/:page/pageSize/:pageSize/", async (req, res) => {
   const address = req.header("Address");
   if (!address) {
@@ -61,7 +95,7 @@ router.get("/tokens/page/:page/pageSize/:pageSize/", async (req, res) => {
   const page = Number(req.params.page) || 1;
   const pageSize = Number(req.params.pageSize) || 10;
   if (!Boolean(page) || !Boolean(pageSize)) {
-    res.status(401).json({
+    res.status(400).json({
       errorMsg: "invalid params"
     });
     return;
