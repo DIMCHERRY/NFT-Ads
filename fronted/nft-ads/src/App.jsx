@@ -4,8 +4,9 @@ import { BrowserRouter as Router, Route, Redirect, Switch } from "react-router-d
 import Loadable from "react-loadable";
 import { Spin } from "antd";
 import Header from "./components/Header";
+import { WalletProvider } from "./hooks/useWallet";
 
-function App() {
+const App = () => {
   return (
     <div className="App">
       <Router>
@@ -33,12 +34,21 @@ function App() {
               loading: () => <Spin spinning />
             })}
           />
+          <Route
+            path="/explore"
+            component={Loadable({
+              loader: () => import("./pages/explore"),
+              loading: () => <Spin spinning />
+            })}
+          />
           <Redirect from={"/profile/*"} to={"/profile"} />
           <Redirect from={"/*"} to={"/home"} />
         </Switch>
       </Router>
     </div>
   );
-}
+};
 
-export default App;
+const WrappedApp = () => <WalletProvider>{App}</WalletProvider>;
+
+export default WrappedApp;

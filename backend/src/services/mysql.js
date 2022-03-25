@@ -95,6 +95,21 @@ class Mysql {
     return rows;
   }
 
+  async queryAllTokens(limit, offset) {
+    let [rows] = await this.connection
+      .promise()
+      .query(
+        `SELECT id, creator_address, img_ipfs_url, description, created_at FROM t_tokens where is_deleted = ? LIMIT ${limit} OFFSET ${offset}`,
+        [0]
+      );
+    return rows;
+  }
+
+  async queryAllTokensCount() {
+    let [res] = await this.connection.promise().query(`SELECT COUNT(*) FROM t_tokens`);
+    return res[0]["COUNT(*)"];
+  }
+
   async queryTokensCountByAddress(_address) {
     // let [rows, fields] = await this.connection.promise().query('SELECT COUNT(*) FROM t_tokens where creator_address = ?', [_address]);
     const [res] = await this.connection
