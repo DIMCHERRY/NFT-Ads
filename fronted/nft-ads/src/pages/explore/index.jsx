@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import BurnModal from "../../components/BurnModal";
 import { get } from "../../network";
 import { Pagination, Card, Avatar, Spin, Popover, message, Empty } from "antd";
-import { CalendarOutlined, LinkOutlined, BlockOutlined } from "@ant-design/icons";
+import { CalendarOutlined, TwitterOutlined, BlockOutlined } from "@ant-design/icons";
 import { useWallet } from "../../hooks/useWallet";
 import { handleError, handleAddress } from "../../util/util";
 import dayjs from "dayjs";
@@ -29,6 +29,12 @@ const Explore = () => {
   };
   const handleBurnModalClose = () => {
     setIsBurnModalVisible(false);
+  };
+  const postTwitter = () => {
+    window.open(
+      "https://twitter.com/intent/tweet?text=Requesting%20faucet%20funds%20into%200x0000000000000000000000000000000000000000%20on%20the%20%23Rinkeby%20%23Ethereum%20test%20network.",
+      "_blank"
+    );
   };
 
   const getDropList = async (page, pageSize, address) => {
@@ -66,8 +72,10 @@ const Explore = () => {
               <Popover content={`create at ${dayjs(item.createAt).format("YYYY-MM-DD HH:mm:ss")}`}>
                 <CalendarOutlined key="calendar" />
               </Popover>,
-              <BlockOutlined key="block" onClick={clickToBurn} />,
-              <LinkOutlined key="link" />
+              <Popover content={"post twitter"}>
+                <TwitterOutlined key="twitter" onClick={postTwitter} />
+              </Popover>,
+              <BlockOutlined key="block" onClick={clickToBurn} />
             ]}
           >
             <Meta

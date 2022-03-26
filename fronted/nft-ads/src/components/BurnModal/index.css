@@ -1,5 +1,7 @@
 .App__burn-modal {
     height: 360px !important;
+    display: flex;
+    justify-content: center;
 }
 
 .App__burn-modal-description,

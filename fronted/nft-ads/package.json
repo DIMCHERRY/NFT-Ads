@@ -19,6 +19,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "publish": "rm -rf ./publish && mkdir ./publish && cp -r build/ ./publish/",
     "lint": "eslint ./src/**/*.js ./src/**/*.jsx --ext .js --cache --fix",
     "eject": "react-scripts eject"
   },
