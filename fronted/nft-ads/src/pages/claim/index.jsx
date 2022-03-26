@@ -16,7 +16,7 @@ const INITIAL_PAGE_SIZE = 8;
 
 const Claim = () => {
   const { walletState } = useWallet();
-  const { address } = walletState;
+  const { address, isLogin } = walletState;
   const [dropList, setDropList] = useState([]);
   const [page, setPage] = useState(INITIAL_PAGE);
   const [total, setTotal] = useState(0);
@@ -54,11 +54,11 @@ const Claim = () => {
     }
   };
   useEffect(() => {
-    if (!address) {
+    if (!address || !isLogin) {
       return;
     }
     getDropList(INITIAL_PAGE, INITIAL_PAGE_SIZE, address);
-  }, [address]);
+  }, [address, isLogin]);
 
   return (
     <Spin spinning={loading}>

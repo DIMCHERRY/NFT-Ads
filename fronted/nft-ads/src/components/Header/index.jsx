@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Dropdown, Menu } from "antd";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { ExclamationCircleOutlined, BarsOutlined, LogoutOutlined } from "@ant-design/icons";
 import logo from "../../assets/logo.png";
 import metaMaskLogo from "../../assets/metamask.png";
 import AboutModal from "../../components/AboutModal";
@@ -14,8 +14,8 @@ import "./index.css";
 const Header = () => {
   const history = useHistory();
   const [isAboutModalVisible, setIsAboutModalVisible] = useState(false);
-  const { walletState, web3, connectMetamask, disconnectMetamask } = useWallet();
-  const { address } = walletState;
+  const { walletState, web3, connectMetamask, disconnectMetamask, setIsLogin } = useWallet();
+  const { address, isLogin } = walletState;
   const login = async () => {
     const address = await connectMetamask();
     if (!address) {
@@ -28,6 +28,7 @@ const Header = () => {
         return;
       }
       await post("/login/token", { address, nounce, signedNounce, user_data: {} });
+      setIsLogin(true);
     } catch (error) {
       handleError(error, "login");
     }
@@ -52,15 +53,19 @@ const Header = () => {
           <ExclamationCircleOutlined />
           <span className="App__header-menu-about">About</span>
         </div>
-        {address ? (
+        {address && isLogin ? (
           <div className="App__header-menu-item">
             <Dropdown
               overlay={
                 <Menu>
-                  <Menu.Item onClick={() => history.push("/profile/drop-history")} key="history">
+                  <Menu.Item
+                    onClick={() => history.push("/profile/drop-history")}
+                    key="history"
+                    icon={<BarsOutlined />}
+                  >
                     Drop History
                   </Menu.Item>
-                  <Menu.Item onClick={logout} key="logout">
+                  <Menu.Item onClick={logout} key="logout" icon={<LogoutOutlined />}>
                     Disconnect Wallet
                   </Menu.Item>
                 </Menu>
