@@ -16,6 +16,7 @@ const useWalletReducer = () => {
     window.myWeb3 = myWeb3;
 
     return {
+      isLogin: false,
       address: myWeb3.currentProvider.selectedAddress,
       networkVersion: myWeb3.currentProvider.networkVersion,
       isMetaMask: myWeb3.currentProvider.isMetaMask
@@ -26,6 +27,10 @@ const useWalletReducer = () => {
     switch (action.type) {
       case "init":
         return action.payload;
+      case "login":
+        return { ...state, isLogin: true };
+      case "logout":
+        return { ...state, isLogin: false };
       case "address":
         return { ...state, address: Array.isArray(action.payload) ? action.payload[0] : undefined };
       case "networkVersion":
@@ -64,6 +69,7 @@ const useWalletReducer = () => {
   };
 
   const changeAddress = (address) => dispatch({ type: "address", payload: address });
+  const setIsLogin = (isLogin) => dispatch({ type: isLogin ? "login" : "logout" });
   const changeNetVersion = (networkVersion) =>
     dispatch({ type: "networkVersion", payload: Number(networkVersion) });
   // const changeIsMatemask = (isMetaMask) => dispatch({ type: 'isMatemask', payload: isMetaMask });
@@ -115,26 +121,38 @@ const useWalletReducer = () => {
 
   useEffect(() => {
     if (!web3.current) return;
+    /**
+     * TODO: 判断cookie 里的 token 和当前的address是否一致
+     */
     window.cookieStore.get("token").then((token) => {
       if (!token) {
         disconnectMetamask();
+      } else {
+        setIsLogin(true);
       }
     });
     web3.current.currentProvider.on("accountsChanged", changeAddress);
     web3.current.currentProvider.on("chainChanged", changeNetVersion);
   }, []);
 
-  return { walletState, validateMetamask, web3, connectMetamask, disconnectMetamask };
+  return { walletState, validateMetamask, web3, connectMetamask, disconnectMetamask, setIsLogin };
 };
 
 export const WalletContext = createContext();
 export const useWallet = () => useContext(WalletContext);
 export const WalletProvider = ({ children }) => {
-  const { walletState, validateMetamask, web3, connectMetamask, disconnectMetamask } =
+  const { walletState, validateMetamask, web3, connectMetamask, disconnectMetamask, setIsLogin } =
     useWalletReducer();
   return (
     <WalletContext.Provider
-      value={{ walletState, validateMetamask, web3, connectMetamask, disconnectMetamask }}
+      value={{
+        walletState,
+        validateMetamask,
+        web3,
+        connectMetamask,
+        disconnectMetamask,
+        setIsLogin
+      }}
     >
       <WalletContext.Consumer>{children}</WalletContext.Consumer>
     </WalletContext.Provider>

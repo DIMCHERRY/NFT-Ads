@@ -42,7 +42,7 @@ function BurnModal(props) {
         </div>
         <div className="App__modal-body">
           <p className="App__burn-modal-description">
-            please input your ETH Global stake transaction hash below
+            please input the twitter url your have post below
           </p>
           {/* <input
             type="text"
@@ -58,8 +58,10 @@ function BurnModal(props) {
           <Input
             className="App__burn-modal-input"
             value={twitterUrl}
-            onChange={setTwitterUrl}
-            placeholder="input the twitter url you have post"
+            onChange={(e) => {
+              setTwitterUrl(e.target.value);
+            }}
+            placeholder="twitter url"
           />
           <Button
             type="primary"
