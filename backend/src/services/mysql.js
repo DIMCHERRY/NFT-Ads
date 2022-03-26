@@ -105,6 +105,16 @@ class Mysql {
     return rows;
   }
 
+  async queryBatchTokensById(tokenIds) {
+    let [rows] = await this.connection
+      .promise()
+      .query(
+        `SELECT id, creator_address, img_ipfs_url, description, created_at FROM t_tokens where id IN (${tokenIds.join()})`,
+        tokenIds
+      );
+    return rows;
+  }
+
   async queryAllTokensCount() {
     let [res] = await this.connection.promise().query(`SELECT COUNT(*) FROM t_tokens`);
     return res[0]["COUNT(*)"];
@@ -153,6 +163,13 @@ class Mysql {
       });
     });
   }
+  async deleteTokenById(id) {
+    await this.connection.promise().query("UPDATE t_tokens SET is_deleted='1' WHERE id=?", [id]);
+  }
+  async confirmTokenById(id) {
+    await this.connection.promise().query("UPDATE t_tokens SET is_deleted='0' WHERE id=?", [id]);
+  }
+
   async queryTokenByIDAsync(_id) {
     let [rows, fields] = await this.connection
       .promise()

@@ -2,6 +2,7 @@ import { createContext, useReducer, useEffect, useRef, useContext } from "react"
 import { message } from "antd";
 import Web3 from "web3";
 import { handleError } from "../util/util";
+import { get } from "../network";
 
 const useWalletReducer = () => {
   const web3 = useRef(null);
@@ -121,16 +122,25 @@ const useWalletReducer = () => {
 
   useEffect(() => {
     if (!web3.current) return;
+    const initState = getInitialState();
+    dispatch({
+      type: "init",
+      payload: initState
+    });
     /**
      * TODO: 判断cookie 里的 token 和当前的address是否一致
      */
-    window.cookieStore.get("token").then((token) => {
-      if (!token) {
-        disconnectMetamask();
-      } else {
-        setIsLogin(true);
-      }
-    });
+    window.cookieStore
+      .get("token")
+      .then((token) => {
+        if (!token) {
+          disconnectMetamask();
+          return false;
+        }
+        return get("/login/isLogin", { headers: { address: initState.address } });
+      })
+      .then(({ data }) => setIsLogin(data?.data?.isLogin))
+      .catch((error) => console.warn("isLogin error", error));
     web3.current.currentProvider.on("accountsChanged", changeAddress);
     web3.current.currentProvider.on("chainChanged", changeNetVersion);
   }, []);

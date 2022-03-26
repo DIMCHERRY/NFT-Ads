@@ -107,6 +107,7 @@ function StartModal(props) {
         gasLimit: 1000000
       };
       await NFTADContract.mintToMany(allRecipients, tokenId, 1, options);
+      post("/api/tokens/confirm", { tokenId }, { headers: { address } });
 
       alert("Success!");
       handleClose();

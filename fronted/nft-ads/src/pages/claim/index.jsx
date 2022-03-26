@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import BurnModal from "../../components/BurnModal";
-import { get } from "../../network";
+import { get, post } from "../../network";
 import { Pagination, Card, Avatar, Spin, Popover, message, Empty } from "antd";
 import { CalendarOutlined, TwitterOutlined, BlockOutlined } from "@ant-design/icons";
 import { useWallet } from "../../hooks/useWallet";
 import { handleError, handleAddress } from "../../util/util";
 import dayjs from "dayjs";
+import { ethers } from "ethers";
+import NAFTADABI from "../../abi/NFTAD.json";
 
 import "./index.css";
 
@@ -13,6 +15,7 @@ const { Meta } = Card;
 
 const INITIAL_PAGE = 1;
 const INITIAL_PAGE_SIZE = 8;
+const NFTADAddress = "0x20E156f53E6F823e92FFEDA7eDf7B55188223F95";
 
 const Claim = () => {
   const { walletState } = useWallet();
@@ -23,6 +26,7 @@ const Claim = () => {
   const [pageSize, setPageSize] = useState(INITIAL_PAGE_SIZE);
   const [loading, setLoading] = useState(false);
   const [isBurnModalVisible, setIsBurnModalVisible] = useState(false);
+  const tokenIds = useRef([]);
 
   const clickToBurn = () => {
     setIsBurnModalVisible(true);
@@ -37,16 +41,53 @@ const Claim = () => {
     );
   };
 
-  const getDropList = async (page, pageSize, address) => {
+  const initTokenIds = async () => {
     if (!address) {
       message.warning("need login");
     }
     try {
       setLoading(true);
-      const { data } = await get(`/api/tokens/all/page/${page}/pageSize/${pageSize}/`);
-      const { total = 0, tokens = [] } = data;
-      setTotal(total);
-      setDropList(tokens);
+      const { data } = await get(`/api/tokens/all`, { headers: { address } });
+      const { tokenIds } = data;
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const NFTADContract = new ethers.Contract(NFTADAddress, NAFTADABI, signer);
+      const result = await NFTADContract.balanceOfBatch(
+        new Array(tokenIds.length).fill(address),
+        tokenIds
+      );
+      const ownedTokenIds = result.reduce((pre, el, i) => {
+        Boolean(Number(el)) && pre.push(tokenIds[i]);
+        return pre;
+      }, []);
+      tokenIds.current = ownedTokenIds;
+      setTotal(ownedTokenIds.length);
+      return ownedTokenIds;
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getDropList = async ({ page, pageSize, address, ids }) => {
+    if (!address) {
+      message.warning("need login");
+    }
+    ids = Boolean(ids?.length) ? ids : tokenIds.current;
+    if (ids.length <= 0) {
+      return;
+    }
+    try {
+      setLoading(true);
+      const res = await post(
+        "/api/tokens/batch",
+        {
+          tokenIds: ids.slice((page - 1) * pageSize, page * pageSize)
+        },
+        { headers: { address } }
+      );
+      setDropList(res.data.tokens);
     } catch (error) {
       handleError(error);
     } finally {
@@ -57,7 +98,9 @@ const Claim = () => {
     if (!address || !isLogin) {
       return;
     }
-    getDropList(INITIAL_PAGE, INITIAL_PAGE_SIZE, address);
+    initTokenIds().then((ids) =>
+      getDropList({ page: INITIAL_PAGE, pageSize: INITIAL_PAGE_SIZE, address, ids })
+    );
   }, [address, isLogin]);
 
   return (
@@ -104,7 +147,7 @@ const Claim = () => {
             onChange={(page, pageSize) => {
               setPage(page);
               setPageSize(pageSize);
-              getDropList(page, pageSize, address);
+              getDropList({ page, pageSize, address });
             }}
           />
         </div>

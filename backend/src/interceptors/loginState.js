@@ -2,7 +2,7 @@
 const Debug = require("debug");
 const debug = Debug("validateLogin");
 
-const NEED_LOGIN_URL = ["/test/login", "/api/tokens"];
+const NEED_LOGIN_URL = ["/test/login", "/api/tokens", "/login/isLogin"];
 const isNeedLogin = (url) => {
   if (NEED_LOGIN_URL.some((p) => url.startsWith(p))) {
     return true;
@@ -24,9 +24,22 @@ const validateLogin = async (req, res, next) => {
     });
     return;
   }
+  const address = req.header("address");
+  if (!address) {
+    debug("address not exist!");
+    res.status(401).json({
+      errorCode: 4,
+      errorMsg: "need connect",
+      data: {}
+    });
+    return;
+  }
   const isValidToken = () => {
     try {
       const tokenJson = JSON.parse(token);
+      if (address !== tokenJson.address) {
+        throw new Error("token address not match");
+      }
       return tokenJson.expires > new Date().getTime();
     } catch (err) {
       debug("isValidToken error:", err);
