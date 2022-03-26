@@ -35,9 +35,9 @@ const App = () => {
             })}
           />
           <Route
-            path="/explore"
+            path="/claim"
             component={Loadable({
-              loader: () => import("./pages/explore"),
+              loader: () => import("./pages/claim"),
               loading: () => <Spin spinning />
             })}
           />

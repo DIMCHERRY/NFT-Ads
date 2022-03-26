@@ -28,10 +28,10 @@ const Home = () => {
       <div className="App__body-description">an AD delivery tool for Web3 users.</div>
       <div className="App__body-actions">
         <div className="App__body-start-to-drop" onClick={clickStartToDrop}>
-          Create
+          Airdrop
         </div>
-        <div className="App__body-burn-nft" onClick={() => history.push("/explore")}>
-          Explore
+        <div className="App__body-burn-nft" onClick={() => history.push("/claim")}>
+          Claim
         </div>
       </div>
       <div className="App__body-advantages">

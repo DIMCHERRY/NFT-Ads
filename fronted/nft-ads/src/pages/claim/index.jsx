@@ -14,7 +14,7 @@ const { Meta } = Card;
 const INITIAL_PAGE = 1;
 const INITIAL_PAGE_SIZE = 8;
 
-const Explore = () => {
+const Claim = () => {
   const { walletState } = useWallet();
   const { address } = walletState;
   const [dropList, setDropList] = useState([]);
@@ -116,4 +116,4 @@ const Explore = () => {
   );
 };
 
-export default Explore;
+export default Claim;
