@@ -1,15 +1,15 @@
 module.exports = {
   root: true,
   env: {
-    es2020: true,
+    es2021: true,
     browser: true
   },
   parser: "babel-eslint",
   parserOptions: {
-    ecmaVersion: 2020,
+    ecmaVersion: 2021,
     sourceType: "module"
   },
-  // extends: ['prettier', 'prettier/react', 'prettier/@typescript-eslint'],
+  // extends: ["prettier", "prettier/react", "prettier/@typescript-eslint"],
   extends: ["plugin:prettier/recommended"],
   rules: {
     "prettier/prettier": [

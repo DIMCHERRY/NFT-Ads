@@ -1,13 +1,15 @@
 import { closeIcon } from "../../assets/icons";
 import NAFTADABI from "../../abi/NFTAD.json";
 import "./index.css";
-import { Button } from "antd";
+import { Button, Input } from "antd";
 import { ethers } from "ethers";
-import React from "react";
+import React, { useState } from "react";
 import { handleError } from "../../util/util";
 
 function BurnModal(props) {
   const { handleClose } = props;
+  const [twitterUrl, setTwitterUrl] = useState("");
+  // const [transHash, setTransHash] = useState("");
 
   const clickConfirm = async () => {
     try {
@@ -42,10 +44,22 @@ function BurnModal(props) {
           <p className="App__burn-modal-description">
             please input your ETH Global stake transaction hash below
           </p>
-          <input
+          {/* <input
             type="text"
             className="App__burn-modal-input"
             placeholder="input transaction hash"
+          /> */}
+          {/* <Input
+            className="App__burn-modal-input"
+            value={transHash}
+            onChange={setTransHash}
+            placeholder="input transaction hash"
+          /> */}
+          <Input
+            className="App__burn-modal-input"
+            value={twitterUrl}
+            onChange={setTwitterUrl}
+            placeholder="input the twitter url you have post"
           />
           <Button
             type="primary"
