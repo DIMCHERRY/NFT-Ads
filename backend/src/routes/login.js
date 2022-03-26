@@ -50,6 +50,17 @@ router.post("/nounce", async (req, res) => {
   clearNounceCache();
 });
 
+router.get("/isLogin", async (req, res) => {
+  res.status(200).json({
+    errorCode: 0,
+    errorMsg: "",
+    data: {
+      isLogin: true
+    }
+  });
+  return;
+});
+
 router.post("/token", async (req, res) => {
   const { address, nounce, signedNounce, user_data } = req.body;
   if (!address || !nounce || !signedNounce) {

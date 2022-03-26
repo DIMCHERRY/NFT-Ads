@@ -84,6 +84,49 @@ router.get("/tokens/all/page/:page/pageSize/:pageSize/", async (req, res) => {
   }
 });
 
+router.get("/tokens/all", async (req, res) => {
+  try {
+    const tokens = await mysqlConn.queryAllTokens(1000, 0);
+    res.status(200).json({
+      tokenIds: tokens.map((item) => item.id)
+    });
+    return;
+  } catch (e) {
+    console.log(e.message);
+    res.status(502).json({
+      errorCode: 1,
+      errorMsg: e.message,
+      data: []
+    });
+    return;
+  }
+});
+
+router.post("/tokens/batch", async (req, res) => {
+  const { tokenIds } = req.body;
+  try {
+    const tokens = await mysqlConn.queryBatchTokensById(tokenIds);
+    res.status(200).json({
+      tokens: tokens.map((item) => ({
+        imgUrl: item.img_ipfs_url,
+        tokenId: item.id,
+        createAt: item.created_at,
+        description: item.description,
+        address: item.creator_address
+      }))
+    });
+    return;
+  } catch (e) {
+    console.log(e.message);
+    res.status(502).json({
+      errorCode: 1,
+      errorMsg: e.message,
+      data: []
+    });
+    return;
+  }
+});
+
 router.get("/tokens/page/:page/pageSize/:pageSize/", async (req, res) => {
   const address = req.header("Address");
   if (!address) {
@@ -138,6 +181,52 @@ async function queryTokenByID(tokenID) {
   });
 }
 
+router.post("/tokens/delete", async (req, res) => {
+  const { tokenId } = req.body;
+  try {
+    if (!tokenId) {
+      throw new Error("invalid tokenId");
+    }
+    await mysqlConn.deleteTokenById(tokenId);
+    res.status(200).json({
+      errorCode: 0,
+      errorMsg: "success",
+      data: { tokenId }
+    });
+    return;
+  } catch (e) {
+    console.log(e.message, e);
+    res.status(502).json({
+      errorCode: 1,
+      errorMsg: e.message
+    });
+    return;
+  }
+});
+
+router.post("/tokens/confirm", async (req, res) => {
+  const { tokenId } = req.body;
+  try {
+    if (!tokenId) {
+      throw new Error("invalid tokenId");
+    }
+    await mysqlConn.confirmTokenById(tokenId);
+    res.status(200).json({
+      errorCode: 0,
+      errorMsg: "success",
+      data: { tokenId }
+    });
+    return;
+  } catch (e) {
+    console.log(e.message, e);
+    res.status(502).json({
+      errorCode: 1,
+      errorMsg: e.message
+    });
+    return;
+  }
+});
+
 router.get("/tokens/:id/", async (req, res) => {
   const tokenID = req.params.id;
   console.log("query for token id : " + tokenID);
@@ -190,6 +279,7 @@ router.post("/tokens/", async (req, res) => {
   try {
     mysqlConn.insertOneToken(image_url, address, description);
     let id = await mysqlConn.queryTokenByIMGURLAsync(image_url);
+    await mysqlConn.deleteTokenById(id);
     res.status(200).json({
       errorCode: 0,
       errorMsg: "success",
