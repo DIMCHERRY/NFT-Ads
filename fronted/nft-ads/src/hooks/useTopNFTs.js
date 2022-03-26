@@ -63,8 +63,8 @@ const isCacheInvalid = async () => {
 const useTopNFTs = () => {
   const [topNFTs, setTopNFTs] = useState([]);
   const fetchTopNFT = async () => {
-    const results = await Promise.all(
-      topNFTKeys.map(async (item) => {
+    const results1 = await Promise.all(
+      topNFTKeys.slice(0, 5).map(async (item) => {
         const nftOwners = await getNFTOwners(contractConsts[item]);
         return {
           key: item,
@@ -73,6 +73,17 @@ const useTopNFTs = () => {
         };
       })
     );
+    const results2 = await Promise.all(
+      topNFTKeys.slice(5, 10).map(async (item) => {
+        const nftOwners = await getNFTOwners(contractConsts[item]);
+        return {
+          key: item,
+          image: nftImages[item],
+          nftOwners
+        };
+      })
+    );
+    const results = [...results1, ...results2];
     localStorage.setItem(CACHE_KEY, JSON.stringify(results));
     localStorage.setItem(LAST_FETCH_KET, Date.now());
 
