@@ -69,13 +69,14 @@ const useWalletReducer = () => {
     return true;
   };
 
+  const initState = (state) => dispatch({ type: "init", payload: state });
   const changeAddress = (address) => dispatch({ type: "address", payload: address });
   const setIsLogin = (isLogin) => dispatch({ type: isLogin ? "login" : "logout" });
   const changeNetVersion = (networkVersion) =>
     dispatch({ type: "networkVersion", payload: Number(networkVersion) });
   // const changeIsMatemask = (isMetaMask) => dispatch({ type: 'isMatemask', payload: isMetaMask });
   const disconnectMetamask = () => {
-    dispatch({ type: "init", payload: {} });
+    initState({});
     web3.current.setProvider(null);
   };
   const connectMetamask = async () => {
@@ -122,25 +123,22 @@ const useWalletReducer = () => {
 
   useEffect(() => {
     if (!web3.current) return;
-    const initState = getInitialState();
-    dispatch({
-      type: "init",
-      payload: initState
-    });
     /**
      * TODO: 判断cookie 里的 token 和当前的address是否一致
      */
-    window.cookieStore
-      .get("token")
-      .then((token) => {
-        if (!token) {
-          disconnectMetamask();
-          return false;
-        }
-        return get("/login/isLogin", { headers: { address: initState.address } });
-      })
-      .then(({ data }) => setIsLogin(data?.data?.isLogin))
-      .catch((error) => console.warn("isLogin error", error));
+    window.cookieStore.get("token").then((token) => {
+      if (!token) {
+        disconnectMetamask();
+        return false;
+      }
+      setTimeout(() => {
+        const state = getInitialState();
+        initState(state);
+        get("/login/isLogin", { headers: { address: state.address } })
+          .then(({ data }) => setIsLogin(data?.data?.isLogin))
+          .catch((error) => console.warn("isLogin error", error));
+      }, 600);
+    });
     web3.current.currentProvider.on("accountsChanged", changeAddress);
     web3.current.currentProvider.on("chainChanged", changeNetVersion);
   }, []);
