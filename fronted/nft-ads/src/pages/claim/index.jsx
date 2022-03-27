@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import BurnModal from "../../components/BurnModal";
 import { get, post } from "../../network";
 import { Pagination, Card, Avatar, Spin, Popover, message, Empty } from "antd";
-import { CalendarOutlined, TwitterOutlined, BlockOutlined } from "@ant-design/icons";
+import { CalendarOutlined, TwitterOutlined, BlockOutlined, ArrowRightOutlined  } from "@ant-design/icons";
 import { useWallet } from "../../hooks/useWallet";
 import { handleError, handleAddress } from "../../util/util";
 import dayjs from "dayjs";
@@ -39,6 +39,11 @@ const Claim = () => {
       "https://twitter.com/intent/tweet?text=Using%20Lens%20Protocol%20as%20the%20foundation,%20LFGrow%20enables%20teams%20to%20build%20on%20the%20Lens%20Protocol%20by%20providing%20an%20abundance%20of%20hacking%20resources%20like%20mentors,%20sponsors,%20and%20software.%20It’s%20free%20to%20attend%20–%20visit%20https://lfgrow.ethglobal.com%20to%20apply.",
       "_blank"
     );
+  };
+
+  const jumpToOpensea = (tokenId) => {
+    const url = `https://opensea.io/assets/${NFTADAddress}/${tokenId}`;
+    window.open(url, "_blank");
   };
 
   const getTokenIds = async () => {
@@ -117,6 +122,9 @@ const Claim = () => {
             actions={[
               <Popover content={`create at ${dayjs(item.createAt).format("YYYY-MM-DD HH:mm:ss")}`}>
                 <CalendarOutlined key="calendar" />
+              </Popover>,
+              <Popover content={"to opensea"}>
+                <ArrowRightOutlined key="opensea" onClick={jumpToOpensea(item.tokenId)} />
               </Popover>,
               <Popover content={"post twitter"}>
                 <TwitterOutlined key="twitter" onClick={postTwitter} />
