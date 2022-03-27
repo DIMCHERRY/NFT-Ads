@@ -2,8 +2,11 @@
 const Debug = require("debug");
 const debug = Debug("validateLogin");
 
-const NEED_LOGIN_URL = ["/test/login", "/api/tokens", "/login/isLogin"];
+const NEED_LOGIN_URL = ["/test/login", "/api/tokens/", "/login/isLogin"];
 const isNeedLogin = (url) => {
+  if (/^\/api\/tokens\/\d/.test(url)) {
+    return false;
+  }
   if (NEED_LOGIN_URL.some((p) => url.startsWith(p))) {
     return true;
   }
