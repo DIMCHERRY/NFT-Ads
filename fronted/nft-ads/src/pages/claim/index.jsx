@@ -21,7 +21,7 @@ const { Meta } = Card;
 const INITIAL_PAGE = 1;
 const INITIAL_PAGE_SIZE = 8;
 const NFTADAddress = "0x20E156f53E6F823e92FFEDA7eDf7B55188223F95";
-const NFTTokenID = 0;
+const INITIAL_NFTTokenID = 0;
 
 const Claim = () => {
   const { walletState } = useWallet();
@@ -32,7 +32,7 @@ const Claim = () => {
   const [pageSize, setPageSize] = useState(INITIAL_PAGE_SIZE);
   const [loading, setLoading] = useState(false);
   const [isBurnModalVisible, setIsBurnModalVisible] = useState(false);
-  const [nftTokenID, setNftTokenID] = useState(NFTTokenID);
+  const [nftTokenID, setNftTokenID] = useState(INITIAL_NFTTokenID);
   const tokenIds = useRef([]);
 
   const clickToBurn = (tokenId) => {
