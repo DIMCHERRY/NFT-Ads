@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import { handleError } from "../../util/util";
 
 function BurnModal(props) {
-  const { handleClose } = props;
+  const { handleClose, nftTokenID } = props;
   const [twitterUrl, setTwitterUrl] = useState("");
   // const [transHash, setTransHash] = useState("");
 
@@ -21,7 +21,7 @@ function BurnModal(props) {
       const options = {
         gasLimit: 1000000
       };
-      const tx = await NFTADContract.burn(1, 1, options);
+      const tx = await NFTADContract.burn(nftTokenID, 1, options);
 
       alert("Success!");
       handleClose();

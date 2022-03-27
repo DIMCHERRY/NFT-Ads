@@ -21,6 +21,7 @@ const { Meta } = Card;
 const INITIAL_PAGE = 1;
 const INITIAL_PAGE_SIZE = 8;
 const NFTADAddress = "0x20E156f53E6F823e92FFEDA7eDf7B55188223F95";
+const NFTTokenID = 0;
 
 const Claim = () => {
   const { walletState } = useWallet();
@@ -31,9 +32,11 @@ const Claim = () => {
   const [pageSize, setPageSize] = useState(INITIAL_PAGE_SIZE);
   const [loading, setLoading] = useState(false);
   const [isBurnModalVisible, setIsBurnModalVisible] = useState(false);
+  const [nftTokenID, setNftTokenID] = useState(NFTTokenID);
   const tokenIds = useRef([]);
 
-  const clickToBurn = () => {
+  const clickToBurn = (tokenId) => {
+    setNftTokenID(tokenId);
     setIsBurnModalVisible(true);
   };
   const handleBurnModalClose = () => {
@@ -47,9 +50,9 @@ const Claim = () => {
   };
 
   const jumpToOpensea = (tokenId) => {
-    if(!tokenId) return;
-    const url = `https://opensea.io/assets/${NFTADAddress}/${tokenId}`;
-    window.open(url, "_blank");
+    if (!tokenId) return;
+    // const url = `https://opensea.io/assets/${NFTADAddress}/${tokenId}`;
+    // window.open(url, "_blank");
   };
 
   const getTokenIds = async () => {
@@ -132,7 +135,7 @@ const Claim = () => {
               <Popover content={"post twitter"}>
                 <TwitterOutlined key="twitter" onClick={postTwitter} />
               </Popover>,
-              <BlockOutlined key="block" onClick={clickToBurn} />,
+              <BlockOutlined key="block" onClick={clickToBurn(item.tokenId)} />,
               <Popover content={"to opensea"}>
                 <ArrowRightOutlined key="opensea" onClick={jumpToOpensea(item.tokenId)} />
               </Popover>
@@ -171,7 +174,11 @@ const Claim = () => {
       ) : (
         <Empty />
       )}
-      <BurnModal isModalVisible={isBurnModalVisible} handleClose={handleBurnModalClose} />
+      <BurnModal
+        isModalVisible={isBurnModalVisible}
+        handleClose={handleBurnModalClose}
+        nftTokenID={nftTokenID}
+      />
     </Spin>
   );
 };
