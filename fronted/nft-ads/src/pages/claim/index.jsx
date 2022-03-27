@@ -52,7 +52,7 @@ const Claim = () => {
 
   const jumpToOpensea = (tokenId) => {
     if (!tokenId) return;
-    const url = `https://opensea.io/assets/${NFTADAddress}/${tokenId}`;
+    const url = `https://testnets.opensea.io/assets/mumbai/${NFTADAddress}/${tokenId}`;
     window.open(url, "_blank");
   };
 
