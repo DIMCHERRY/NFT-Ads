@@ -123,13 +123,13 @@ const Claim = () => {
               <Popover content={`create at ${dayjs(item.createAt).format("YYYY-MM-DD HH:mm:ss")}`}>
                 <CalendarOutlined key="calendar" />
               </Popover>,
-              <Popover content={"to opensea"}>
-                <ArrowRightOutlined key="opensea" onClick={jumpToOpensea(item.tokenId)} />
-              </Popover>,
               <Popover content={"post twitter"}>
                 <TwitterOutlined key="twitter" onClick={postTwitter} />
               </Popover>,
-              <BlockOutlined key="block" onClick={clickToBurn} />
+              <BlockOutlined key="block" onClick={clickToBurn} />,
+              <Popover content={"to opensea"}>
+                <ArrowRightOutlined key="opensea" onClick={jumpToOpensea(item.tokenId)} />
+              </Popover>
             ]}
           >
             <Meta
