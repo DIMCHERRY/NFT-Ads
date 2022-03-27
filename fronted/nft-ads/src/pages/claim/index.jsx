@@ -41,7 +41,7 @@ const Claim = () => {
     );
   };
 
-  const initTokenIds = async () => {
+  const getTokenIds = async () => {
     if (!address) {
       message.warning("need login");
     }
@@ -94,13 +94,16 @@ const Claim = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     if (!address || !isLogin) {
       return;
     }
-    initTokenIds().then((ids) =>
-      getDropList({ page: INITIAL_PAGE, pageSize: INITIAL_PAGE_SIZE, address, ids })
-    );
+    const init = async () => {
+      const ids = await getTokenIds();
+      await getDropList({ page: INITIAL_PAGE, pageSize: INITIAL_PAGE_SIZE, address, ids });
+    };
+    init();
   }, [address, isLogin]);
 
   return (

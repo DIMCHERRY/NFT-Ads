@@ -104,13 +104,10 @@ const useWalletReducer = () => {
           resolve(addr);
         });
       });
-      dispatch({
-        type: "init",
-        payload: {
-          address: myWeb3.currentProvider.selectedAddress,
-          networkVersion: myWeb3.currentProvider.networkVersion,
-          isMetaMask: myWeb3.currentProvider.isMetaMask
-        }
+      initState({
+        address: myWeb3.currentProvider.selectedAddress,
+        networkVersion: myWeb3.currentProvider.networkVersion,
+        isMetaMask: myWeb3.currentProvider.isMetaMask
       });
       if (!address) {
         throw new Error("Failed to login!");
