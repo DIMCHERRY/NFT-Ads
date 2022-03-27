@@ -100,7 +100,7 @@ function StartModal(props) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const NFTADContract = new ethers.Contract(NFTADAddress, NAFTADABI, signer);
-      const fees = (0.001 * allRecipients.length).toString();
+      const fees = (0.1 * allRecipients.length).toString();
       const value = ethers.utils.parseEther(fees);
       const options = {
         value,
