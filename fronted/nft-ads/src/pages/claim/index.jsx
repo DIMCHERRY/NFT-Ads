@@ -47,6 +47,7 @@ const Claim = () => {
   };
 
   const jumpToOpensea = (tokenId) => {
+    if(!tokenId) return;
     const url = `https://opensea.io/assets/${NFTADAddress}/${tokenId}`;
     window.open(url, "_blank");
   };
