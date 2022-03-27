@@ -2,7 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import BurnModal from "../../components/BurnModal";
 import { get, post } from "../../network";
 import { Pagination, Card, Avatar, Spin, Popover, message, Empty } from "antd";
-import { CalendarOutlined, TwitterOutlined, BlockOutlined, ArrowRightOutlined  } from "@ant-design/icons";
+import {
+  CalendarOutlined,
+  TwitterOutlined,
+  BlockOutlined,
+  ArrowRightOutlined
+} from "@ant-design/icons";
 import { useWallet } from "../../hooks/useWallet";
 import { handleError, handleAddress } from "../../util/util";
 import dayjs from "dayjs";
