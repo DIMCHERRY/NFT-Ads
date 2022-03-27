@@ -95,7 +95,7 @@ function StartModal(props) {
       const imgUrl = `${HOST}/api/file/${uploadRes}`;
       const tokenId = await addRecord({ imgUrl, description });
 
-      const NFTADAddress = "0x20E156f53E6F823e92FFEDA7eDf7B55188223F95";
+      const NFTADAddress = "0xdCaEB6A15d53F6A03893a8a841213ce57a2EcB94";
       const allRecipients = getAllRecipients();
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
@@ -207,7 +207,7 @@ function StartModal(props) {
                       const num = getAllRecipients().length;
                       return (
                         <div>
-                          <div>0.001Matic/Per</div>
+                          <div>0.1Matic/Per</div>
                           <div>
                             now you have select{" "}
                             <span style={{ color: "#FF5733", fontWeight: "bold" }}>{num}</span>{" "}

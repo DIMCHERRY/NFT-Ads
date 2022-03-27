@@ -13,7 +13,7 @@ function BurnModal(props) {
 
   const clickConfirm = async () => {
     try {
-      const NFTADAddress = "0x20E156f53E6F823e92FFEDA7eDf7B55188223F95";
+      const NFTADAddress = "0xdCaEB6A15d53F6A03893a8a841213ce57a2EcB94";
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
 
