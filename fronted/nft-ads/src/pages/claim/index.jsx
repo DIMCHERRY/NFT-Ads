@@ -3,16 +3,17 @@ import BurnModal from "../../components/BurnModal";
 import { get, post } from "../../network";
 import { Pagination, Card, Avatar, Spin, Popover, message, Empty } from "antd";
 import {
-  CalendarOutlined,
+  // CalendarOutlined,
   TwitterOutlined,
   BlockOutlined,
   ArrowRightOutlined
 } from "@ant-design/icons";
 import { useWallet } from "../../hooks/useWallet";
 import { handleError, handleAddress } from "../../util/util";
-import dayjs from "dayjs";
+// import dayjs from "dayjs";
 import { ethers } from "ethers";
 import NAFTADABI from "../../abi/NFTAD.json";
+import Follow from "./components/follow/index";
 
 import "./index.css";
 
@@ -51,8 +52,8 @@ const Claim = () => {
 
   const jumpToOpensea = (tokenId) => {
     if (!tokenId) return;
-    // const url = `https://opensea.io/assets/${NFTADAddress}/${tokenId}`;
-    // window.open(url, "_blank");
+    const url = `https://opensea.io/assets/${NFTADAddress}/${tokenId}`;
+    window.open(url, "_blank");
   };
 
   const getTokenIds = async () => {
@@ -129,15 +130,16 @@ const Claim = () => {
             key={item.tokenId}
             cover={<img alt={item.tokenId} src={item.imgUrl} className="drop-record-img" />}
             actions={[
-              <Popover content={`create at ${dayjs(item.createAt).format("YYYY-MM-DD HH:mm:ss")}`}>
-                <CalendarOutlined key="calendar" />
-              </Popover>,
+              // <Popover content={`create at ${dayjs(item.createAt).format("YYYY-MM-DD HH:mm:ss")}`}>
+              //   <CalendarOutlined key="calendar" />
+              // </Popover>,
               <Popover content={"post twitter"}>
                 <TwitterOutlined key="twitter" onClick={postTwitter} />
               </Popover>,
-              <BlockOutlined key="block" onClick={clickToBurn(item.tokenId)} />,
+              <Follow />,
+              <BlockOutlined key="block" onClick={() => clickToBurn(item.tokenId)} />,
               <Popover content={"to opensea"}>
-                <ArrowRightOutlined key="opensea" onClick={jumpToOpensea(item.tokenId)} />
+                <ArrowRightOutlined key="opensea" onClick={() => jumpToOpensea(item.tokenId)} />
               </Popover>
             ]}
           >
