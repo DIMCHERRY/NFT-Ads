@@ -6,6 +6,7 @@ const token = "0x96b82b65acf7072efeb00502f45757f254c2a0d4"; // MATICx
 const networkName = "mumbai";
 const url = "https://rpc-mumbai.maticvigil.com/";
 const customHttpProvider = new ethers.providers.JsonRpcProvider(url);
+const indexCreated = 2;
 
 //where the Superfluid logic takes place
 const superfluidPay = async () => {
@@ -16,15 +17,13 @@ const superfluidPay = async () => {
     provider: provider
   });
 
-  const randomIndex = Math.floor(Math.random() * 100);
-
   const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
   const address = accounts[0];
   const signer = provider.getSigner();
   const receiver = "0xaA52010Fbf7CC209f7A06353f9769aCe2F3920A3";
   try {
     const createIndexOperation = sf.idaV1.createIndex({
-      indexId: randomIndex,
+      indexId: indexCreated,
       superToken: token
     });
     console.log("Creating your Index...");
@@ -88,7 +87,7 @@ const updateSubscription = async () => {
 
   try {
     const updateSubscriptionOperation = sf.idaV1.updateSubscriptionUnits({
-      indexId: 49,
+      indexId: indexCreated,
       superToken: token,
       subscriber: address,
       units: 1
@@ -103,7 +102,7 @@ const updateSubscription = async () => {
       `Congrats - you've just updated an Index!
       Network: mumbai
       Super Token: Maticx
-         Index ID: 49
+         Index ID: ${indexCreated}
          Subscriber: ${address}
          Units: 1 units
       `
