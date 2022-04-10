@@ -60,7 +60,7 @@ const superfluidPay = async () => {
       `Congrats - you've just created a new Index!
          Network: mumbai
          Super Token: Maticx
-         Index ID: ${randomIndex}
+         Index ID: ${indexCreated}
       `
     );
   } catch (error) {
