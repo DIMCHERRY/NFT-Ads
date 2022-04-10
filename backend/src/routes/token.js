@@ -6,6 +6,7 @@ const { uploadDir } = require("../utils/constant");
 const crypto = require("crypto");
 const fs = require("fs-extra");
 const path = require("path");
+const https = require('https');
 
 router.post("/signup/:address/", async (req, res) => {
   const address = req.params.address;
@@ -333,6 +334,46 @@ router.get("/file/:fileName", async (req, res) => {
     return;
   }
   res.download(filePath);
+});
+
+router.get("/ipfs/:fileName", async (req, res) => {
+  const fileName = req.params.fileName;
+  const filePath = path.join(uploadDir, fileName);
+  if (!fs.existsSync(filePath)) {
+    await fs.createFile(filePath);
+    const file = fs.createWriteStream(filePath);
+    await new Promise((resolve, reject) => {
+      https.get(
+        {
+          path: `/api/v0/cat?arg=${fileName}`,
+          protocol: 'https:',
+          host: 'ipfs.infura.io',
+          port: '5001',
+          method: 'POST'
+        },
+        (res) => {
+          if(res.statusCode !== 200){
+            reject(res.statusCode);
+            return;
+          }
+          res.on('end', resolve);
+          res.on('finish', () => {
+              file.close();
+            })
+            .on('error', (error) => {
+              console.log('error:', error);
+              reject(error);
+              fs.unlink(filePath);
+            });
+          res.pipe(file)
+        });
+    });
+    const originData = fs.readFileSync(filePath, 'utf8');
+    const dataBuffer = new Buffer(originData.replace(/^data:\w+\/\w+;base64,/, ""), 'base64');
+    await fs.writeFile(filePath, dataBuffer);
+  }
+  res.setHeader('Content-Type', 'image/png');
+  res.sendFile(filePath);
 });
 
 module.exports = router;

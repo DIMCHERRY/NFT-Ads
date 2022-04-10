@@ -7,11 +7,21 @@ import NAFTADABI from "../../abi/NFTAD.json";
 import { closeIcon } from "../../assets/icons";
 import { post, HOST } from "../../network";
 import useTopNFTs from "../../hooks/useTopNFTs";
-import { DropDefaultDescription } from "../../util/constant";
+import { DropDefaultDescription, IPFS_HOST } from "../../util/constant";
 import { handleError, getBase64 } from "../../util/util";
 import { superfluidPay } from "../../util/superfluid";
+import { create } from "ipfs-http-client";
 
 import "./index.css";
+
+const ipfsClient = create({
+  protocol: "https",
+  host: IPFS_HOST,
+  port: 5001,
+  headers: {
+    Authorization: `Basic ${btoa("27ayHM2Z1ob8olLVsAIdCqpOrvA:5d527e85ef9828937c5be0f38ef3ca34")}`
+  }
+});
 
 function StartModal(props) {
   const { handleClose, address, validateMetamask } = props;
@@ -92,8 +102,8 @@ function StartModal(props) {
       setLoading(true);
       const { upload, description } = await form.validateFields();
       const [file] = upload;
-      const uploadRes = await uploadFile(file.originFileObj);
-      const imgUrl = `${HOST}/api/file/${uploadRes}`;
+      const add = await ipfsClient.add(file.thumbUrl);
+      const imgUrl = `${HOST}/api/ipfs/${add.path}`;
       const tokenId = await addRecord({ imgUrl, description });
 
       const NFTADAddress = "0xdCaEB6A15d53F6A03893a8a841213ce57a2EcB94";
