@@ -6,6 +6,7 @@ const { uploadDir } = require("../utils/constant");
 const crypto = require("crypto");
 const fs = require("fs-extra");
 const path = require("path");
+const https = require('https');
 
 router.post("/signup/:address/", async (req, res) => {
   const address = req.params.address;
@@ -331,6 +332,53 @@ router.get("/file/:fileName", async (req, res) => {
       data: {}
     });
     return;
+  }
+  res.download(filePath);
+});
+
+// process.on('uncaughtException', function (err) {
+//   console.log('uncaughtException ----------------', err);
+// });
+
+router.get("/ipfs/:fileName", async (req, res) => {
+  const fileName = req.params.fileName;
+  const filePath = path.join(uploadDir, fileName);
+  console.log('fileName:', fileName);
+  console.log('filePath:', filePath);
+  if (fs.existsSync(filePath)) {
+    await fs.remove(filePath);
+  }
+  if (!fs.existsSync(filePath)) {
+    await fs.createFile(filePath);
+    const file = fs.createWriteStream(filePath);
+    const getRes = await new Promise((resolve, reject) => {
+      https.get(
+        {
+          path: `/api/v0/get?arg=${fileName}&archive=true`,
+          protocol: 'https:',
+          host: 'ipfs.infura.io',
+          port: '5001',
+          method: 'POST'
+        },
+        (res) => {
+          if(res.statusCode !== 200){
+            cb(response.statusCode);
+            return;
+          }
+          console.log('res ------', res);
+          res.on('end', resolve);
+          res.on('finish', () => {
+              file.close();
+            })
+            .on('error', (error) => {
+              console.log('error:', error);
+              reject(error);
+              fs.unlink(filePath);
+            });
+          res.pipe(file)
+        });
+    });
+    console.log("getRes -->", getRes);
   }
   res.download(filePath);
 });
