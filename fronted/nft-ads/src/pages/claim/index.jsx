@@ -45,7 +45,7 @@ const Claim = () => {
   };
   const postTwitter = () => {
     window.open(
-      "https://twitter.com/intent/tweet?text=Using%20Lens%20Protocol%20as%20the%20foundation,%20LFGrow%20enables%20teams%20to%20build%20on%20the%20Lens%20Protocol%20by%20providing%20an%20abundance%20of%20hacking%20resources%20like%20mentors,%20sponsors,%20and%20software.%20It’s%20free%20to%20attend%20–%20visit%20https://lfgrow.ethglobal.com%20to%20apply.",
+      "https://twitter.com/intent/tweet?text=Come%20and%20Join%20NFT%20Ads%20DAO%20to%20gain%20benifits%20together%20with%20advertisor.%20%F0%9F%94%A5%F0%9F%94%A5%20https://nftads.info/",
       "_blank"
     );
   };
