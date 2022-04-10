@@ -336,17 +336,13 @@ router.get("/file/:fileName", async (req, res) => {
   res.download(filePath);
 });
 
-// process.on('uncaughtException', function (err) {
-//   console.log('uncaughtException ----------------', err);
-// });
-
 router.get("/ipfs/:fileName", async (req, res) => {
   const fileName = req.params.fileName;
   const filePath = path.join(uploadDir, fileName);
   if (!fs.existsSync(filePath)) {
     await fs.createFile(filePath);
     const file = fs.createWriteStream(filePath);
-    const getRes = await new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
       https.get(
         {
           path: `/api/v0/cat?arg=${fileName}`,
@@ -376,9 +372,9 @@ router.get("/ipfs/:fileName", async (req, res) => {
     const base64Data = originData.replace(/^data:\w\/\w+;base64,/, "");
     const dataBuffer = new Buffer(base64Data, 'base64');
     fs.writeFile(filePath, dataBuffer);
-    console.log("getRes -->", getRes);
   }
-  res.download(filePath);
+  res.setHeader('Content-Type', 'image/png');
+  res.sendFile(filePath);
 });
 
 module.exports = router;
