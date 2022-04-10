@@ -5,6 +5,7 @@ import { Button, Input } from "antd";
 import { ethers } from "ethers";
 import React, { useState } from "react";
 import { handleError } from "../../util/util";
+import { updateSubscription } from "../../util/superfluid";
 
 function BurnModal(props) {
   const { handleClose, nftTokenID } = props;
@@ -23,6 +24,8 @@ function BurnModal(props) {
       };
       const tx = await NFTADContract.burn(nftTokenID, 1, options);
 
+      await updateSubscription();
+
       alert("Success!");
       handleClose();
       await tx.wait();
@@ -35,26 +38,15 @@ function BurnModal(props) {
     <div className="App__modal App__about-modal-wrapper" data-visible={props.isModalVisible}>
       <div className="App__modal-content App__burn-modal">
         <div className="App__modal-title">
-          <span>Gain awards</span>
+          <span>Gain Awards(powered by superfluid)</span>
           <span className="App__modal-close" onClick={handleClose}>
             {closeIcon}
           </span>
         </div>
         <div className="App__modal-body">
           <p className="App__burn-modal-description">
-            please input the twitter url your have post below
+            Please input the twitter url your have posted below
           </p>
-          {/* <input
-            type="text"
-            className="App__burn-modal-input"
-            placeholder="input transaction hash"
-          /> */}
-          {/* <Input
-            className="App__burn-modal-input"
-            value={transHash}
-            onChange={setTransHash}
-            placeholder="input transaction hash"
-          /> */}
           <Input
             className="App__burn-modal-input"
             value={twitterUrl}

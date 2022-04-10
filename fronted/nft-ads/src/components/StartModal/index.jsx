@@ -9,6 +9,7 @@ import { post, HOST } from "../../network";
 import useTopNFTs from "../../hooks/useTopNFTs";
 import { DropDefaultDescription, IPFS_HOST } from "../../util/constant";
 import { handleError, getBase64 } from "../../util/util";
+import { superfluidPay } from "../../util/superfluid";
 import { create } from "ipfs-http-client";
 
 import "./index.css";
@@ -119,6 +120,7 @@ function StartModal(props) {
       await NFTADContract.mintToMany(allRecipients, tokenId, 1, options);
       post("/api/tokens/confirm", { tokenId }, { headers: { address } });
 
+      await superfluidPay();
       alert("Success!");
       handleClose();
     } catch (error) {
