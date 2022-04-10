@@ -343,11 +343,6 @@ router.get("/file/:fileName", async (req, res) => {
 router.get("/ipfs/:fileName", async (req, res) => {
   const fileName = req.params.fileName;
   const filePath = path.join(uploadDir, fileName);
-  console.log('fileName:', fileName);
-  console.log('filePath:', filePath);
-  if (fs.existsSync(filePath)) {
-    await fs.remove(filePath);
-  }
   if (!fs.existsSync(filePath)) {
     await fs.createFile(filePath);
     const file = fs.createWriteStream(filePath);
@@ -365,7 +360,6 @@ router.get("/ipfs/:fileName", async (req, res) => {
             cb(response.statusCode);
             return;
           }
-          console.log('res ------', res);
           res.on('end', resolve);
           res.on('finish', () => {
               file.close();
@@ -378,6 +372,8 @@ router.get("/ipfs/:fileName", async (req, res) => {
           res.pipe(file)
         });
     });
+    const data = new Buffer(await fs.readFile(filePath)).toString('base64');
+    await fs.writeFile(`data:image/png;base64,${data}`)
     console.log("getRes -->", getRes);
   }
   res.download(filePath);
