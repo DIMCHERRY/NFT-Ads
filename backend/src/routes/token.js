@@ -349,7 +349,7 @@ router.get("/ipfs/:fileName", async (req, res) => {
     const getRes = await new Promise((resolve, reject) => {
       https.get(
         {
-          path: `/api/v0/get?arg=${fileName}&archive=true`,
+          path: `/api/v0/cat?arg=${fileName}`,
           protocol: 'https:',
           host: 'ipfs.infura.io',
           port: '5001',
@@ -357,7 +357,7 @@ router.get("/ipfs/:fileName", async (req, res) => {
         },
         (res) => {
           if(res.statusCode !== 200){
-            cb(response.statusCode);
+            reject(res.statusCode);
             return;
           }
           res.on('end', resolve);
@@ -372,8 +372,6 @@ router.get("/ipfs/:fileName", async (req, res) => {
           res.pipe(file)
         });
     });
-    const data = new Buffer(await fs.readFile(filePath)).toString('base64');
-    await fs.writeFile(`data:image/png;base64,${data}`)
     console.log("getRes -->", getRes);
   }
   res.download(filePath);
