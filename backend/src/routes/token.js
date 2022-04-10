@@ -369,9 +369,8 @@ router.get("/ipfs/:fileName", async (req, res) => {
         });
     });
     const originData = fs.readFileSync(filePath, 'utf8');
-    const base64Data = originData.replace(/^data:\w+\/\w+;base64,/, "");
-    const dataBuffer = new Buffer(base64Data, 'base64');
-    fs.writeFile(filePath, dataBuffer);
+    const dataBuffer = new Buffer(originData.replace(/^data:\w+\/\w+;base64,/, ""), 'base64');
+    await fs.writeFile(filePath, dataBuffer);
   }
   res.setHeader('Content-Type', 'image/png');
   res.sendFile(filePath);
