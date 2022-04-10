@@ -110,7 +110,7 @@ function StartModal(props) {
       await NFTADContract.mintToMany(allRecipients, tokenId, 1, options);
       post("/api/tokens/confirm", { tokenId }, { headers: { address } });
 
-      superfluidPay();
+      await superfluidPay();
       alert("Success!");
       handleClose();
     } catch (error) {

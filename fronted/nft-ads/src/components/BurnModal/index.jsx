@@ -5,6 +5,7 @@ import { Button, Input } from "antd";
 import { ethers } from "ethers";
 import React, { useState } from "react";
 import { handleError } from "../../util/util";
+import { updateSubscription } from "../../util/superfluid";
 
 function BurnModal(props) {
   const { handleClose, nftTokenID } = props;
@@ -22,6 +23,8 @@ function BurnModal(props) {
         gasLimit: 1000000
       };
       const tx = await NFTADContract.burn(nftTokenID, 1, options);
+
+      await updateSubscription();
 
       alert("Success!");
       handleClose();

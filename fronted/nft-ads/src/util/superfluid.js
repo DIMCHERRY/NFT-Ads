@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { Framework } from "@superfluid-finance/sdk-core";
 import { ethers } from "ethers";
 
+const token = "0x96b82b65acf7072efeb00502f45757f254c2a0d4"; // MATICx
+const networkName = "mumbai";
+const url = "https://rpc-mumbai.maticvigil.com/";
+const customHttpProvider = new ethers.providers.JsonRpcProvider(url);
+
 //where the Superfluid logic takes place
 const superfluidPay = async () => {
   const flowRate = BigInt(Math.floor((1 / 6 / 6 / 24 / 3) * 100000000000000)); // 0.1Maticx / month flowRate is wei/second
@@ -13,7 +18,6 @@ const superfluidPay = async () => {
 
   const randomIndex = Math.floor(Math.random() * 100);
 
-  const token = "0x96b82b65acf7072efeb00502f45757f254c2a0d4"; // MATICx
   const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
   const address = accounts[0];
   const signer = provider.getSigner();
@@ -68,4 +72,45 @@ const superfluidPay = async () => {
   }
 };
 
-export { superfluidPay };
+const updateSubscription = async () => {
+  const sf = await Framework.create({
+    networkName: networkName,
+    provider: customHttpProvider
+  });
+
+  const signer = sf.createSigner({
+    privateKey: "6cc198b1283c744756680beb238e177b822fdc85ba9cfbabe8d1da59af261943",
+    provider: customHttpProvider
+  });
+
+  const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+  const address = accounts[0];
+
+  try {
+    const updateSubscriptionOperation = sf.idaV1.updateSubscriptionUnits({
+      indexId: 49,
+      superToken: token,
+      subscriber: address,
+      units: 1
+      // userData?: string
+    });
+
+    console.log("Updating your Index...");
+
+    await updateSubscriptionOperation.exec(signer);
+
+    console.log(
+      `Congrats - you've just updated an Index!
+      Network: mumbai
+      Super Token: Maticx
+         Index ID: 49
+         Subscriber: ${address}
+         Units: 1 units
+      `
+    );
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export { superfluidPay, updateSubscription };
