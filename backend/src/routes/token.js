@@ -337,6 +337,7 @@ router.get("/file/:fileName", async (req, res) => {
 });
 
 router.get("/ipfs/:fileName", async (req, res) => {
+  res.setHeader('Content-Type', 'image/png');
   const fileName = req.params.fileName;
   const filePath = path.join(uploadDir, fileName);
   if (!fs.existsSync(filePath)) {
@@ -356,7 +357,9 @@ router.get("/ipfs/:fileName", async (req, res) => {
             reject(res.statusCode);
             return;
           }
-          res.on('end', resolve);
+          res.on('end', () => {
+            setTimeout(() => resolve(), 1000)
+          });
           res.on('finish', () => {
               file.close();
             })
@@ -365,14 +368,15 @@ router.get("/ipfs/:fileName", async (req, res) => {
               reject(error);
               fs.unlink(filePath);
             });
-          res.pipe(file)
+          res.pipe(file);
         });
     });
     const originData = fs.readFileSync(filePath, 'utf8');
     const dataBuffer = new Buffer(originData.replace(/^data:\w+\/\w+;base64,/, ""), 'base64');
-    await fs.writeFile(filePath, dataBuffer);
+    fs.writeFileSync(filePath, dataBuffer);
+    res.sendFile(filePath);
+    return;
   }
-  res.setHeader('Content-Type', 'image/png');
   res.sendFile(filePath);
 });
 
