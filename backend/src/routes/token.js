@@ -372,6 +372,10 @@ router.get("/ipfs/:fileName", async (req, res) => {
           res.pipe(file)
         });
     });
+    const originData = fs.readFileSync(filePath, 'utf8');
+    const base64Data = originData.replace(/^data:\w\/\w+;base64,/, "");
+    const dataBuffer = new Buffer(base64Data, 'base64');
+    fs.writeFile(filePath, dataBuffer);
     console.log("getRes -->", getRes);
   }
   res.download(filePath);
