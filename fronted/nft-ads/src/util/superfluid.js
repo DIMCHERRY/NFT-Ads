@@ -11,38 +11,54 @@ const superfluidPay = async () => {
     provider: provider
   });
 
+  const randomIndex = Math.floor(Math.random() * 100);
+
   const token = "0x96b82b65acf7072efeb00502f45757f254c2a0d4"; // MATICx
   const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
   const address = accounts[0];
   const signer = provider.getSigner();
   const receiver = "0xaA52010Fbf7CC209f7A06353f9769aCe2F3920A3";
   try {
-    const createFlowOperation = sf.cfaV1.createFlow({
-      sender: address,
-      receiver: receiver,
-      flowRate: flowRate,
-      superToken: token,
-      // userData?: string
-      overrides: {
-        gasLimit: 1000000,
-        gasPrice: 3e9
-      }
+    const createIndexOperation = sf.idaV1.createIndex({
+      indexId: randomIndex,
+      superToken: token
     });
+    console.log("Creating your Index...");
 
-    console.log("Creating your stream...");
+    // const createFlowOperation = sf.cfaV1.createFlow({
+    //   sender: address,
+    //   receiver: receiver,
+    //   flowRate: flowRate,
+    //   superToken: token,
+    //   // userData?: string
+    //   overrides: {
+    //     gasLimit: 1000000,
+    //     gasPrice: 3e9
+    //   }
+    // });
 
-    const result = await createFlowOperation.exec(signer);
+    // console.log("Creating your stream...");
+
+    // const result = await createFlowOperation.exec(signer);
+    const result = await createIndexOperation.exec(signer);
     console.log(result);
 
+    // console.log(
+    //   `Congrats - you've just created a money stream!
+    // View Your Stream At: https://app.superfluid.finance/dashboard/${receiver}
+    // Network: mumbai
+    // Super Token: Maticx
+    // Sender: ${address},
+    // Receiver: ${receiver},
+    // FlowRate: ${flowRate}
+    // `
+    // );
     console.log(
-      `Congrats - you've just created a money stream!
-    View Your Stream At: https://app.superfluid.finance/dashboard/${receiver}
-    Network: mumbai
-    Super Token: Maticx
-    Sender: ${address},
-    Receiver: ${receiver},
-    FlowRate: ${flowRate}
-    `
+      `Congrats - you've just created a new Index!
+         Network: Kovan
+         Super Token: DAIx
+         Index ID: ${randomIndex}
+      `
     );
   } catch (error) {
     console.log(
