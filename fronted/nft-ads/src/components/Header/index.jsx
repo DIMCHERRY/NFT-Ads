@@ -71,7 +71,7 @@ const Header = () => {
                   >
                     Drop History
                   </Menu.Item>
-                  <Menu.Item onClick={handleFaucet} key="logout" icon={<FunnelPlotOutlined />}>
+                  <Menu.Item onClick={handleFaucet} key="faucet" icon={<FunnelPlotOutlined />}>
                     Faucet
                   </Menu.Item>
                   <Menu.Item onClick={logout} key="logout" icon={<LogoutOutlined />}>

@@ -88,8 +88,28 @@ const useWalletReducer = () => {
     window.myWeb3 = web3.current;
     const myWeb3 = web3.current;
     if (web3.current.currentProvider.networkVersion !== "80001") {
-      message.warn("Switch network to Polygon Testnet, please!");
-      return;
+      try {
+        await myWeb3.currentProvider.request({
+          method: "wallet_addEthereumChain",
+          params: [
+            {
+              chainId: "0x13881",
+              chainName: "Polygon Testnet",
+              nativeCurrency: {
+                name: "MATIC",
+                symbol: "MATIC",
+                decimals: 18
+              },
+              rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],
+              blockExplorerUrls: ["https://mumbai.polygonscan.com/"]
+            }
+          ]
+        });
+      } catch (e) {
+        message.warn(e);
+        message.warn("Switch network to Polygon Testnet, please!");
+        return;
+      }
     }
     try {
       await myWeb3.eth.requestAccounts();
@@ -120,6 +140,10 @@ const useWalletReducer = () => {
 
   useEffect(() => {
     if (!web3.current) return;
+    if (web3.current.currentProvider.networkVersion !== "80001") {
+      disconnectMetamask();
+      return false;
+    }
     /**
      * TODO: 判断cookie 里的 token 和当前的address是否一致
      */
