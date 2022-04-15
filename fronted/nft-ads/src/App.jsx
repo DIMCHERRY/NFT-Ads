@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Redirect, Switch } from "react-router-d
 import Loadable from "react-loadable";
 import { Spin } from "antd";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import { WalletProvider } from "./hooks/useWallet";
 
 const App = () => {
@@ -45,6 +46,7 @@ const App = () => {
           <Redirect from={"/*"} to={"/home"} />
         </Switch>
       </Router>
+      <Footer />
     </div>
   );
 };

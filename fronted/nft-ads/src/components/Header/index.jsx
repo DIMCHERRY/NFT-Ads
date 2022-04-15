@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Dropdown, Menu } from "antd";
-import { ExclamationCircleOutlined, BarsOutlined, LogoutOutlined } from "@ant-design/icons";
+import {
+  ExclamationCircleOutlined,
+  BarsOutlined,
+  FunnelPlotOutlined,
+  LogoutOutlined
+} from "@ant-design/icons";
 import logo from "../../assets/logo.png";
 import metaMaskLogo from "../../assets/metamask.png";
 import AboutModal from "../../components/AboutModal";
@@ -45,6 +50,7 @@ const Header = () => {
   const handleAboutModalClose = () => {
     setIsAboutModalVisible(false);
   };
+  const handleFaucet = () => window.open("https://faucet.polygon.technology/", "blank");
   return (
     <header className="App__header">
       <img src={logo} className="App-logo" alt="logo" onClick={() => history.push("/home")} />
@@ -64,6 +70,9 @@ const Header = () => {
                     icon={<BarsOutlined />}
                   >
                     Drop History
+                  </Menu.Item>
+                  <Menu.Item onClick={handleFaucet} key="logout" icon={<FunnelPlotOutlined />}>
+                    Faucet
                   </Menu.Item>
                   <Menu.Item onClick={logout} key="logout" icon={<LogoutOutlined />}>
                     Disconnect Wallet
