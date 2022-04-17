@@ -45,6 +45,7 @@ const Header = () => {
     await window.cookieStore.delete("token");
   };
 
+  //给登录的用户空投测试币
   const getTransferMatic = async (currentAddress) => {
     if (!currentAddress) {
       console.log("need currentAddress");
