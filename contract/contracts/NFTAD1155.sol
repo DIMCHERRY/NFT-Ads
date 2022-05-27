@@ -69,12 +69,9 @@ contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
         emit Minted(msg.sender, account, id, amount);
     }
 
-  /** 
-   * Requests randomness from a user-provided seed
-   */
-    function getRandomNumber(uint256 userProvidedSeed) public returns (bytes32 requestId) {
-        require(LINK.balanceOf(address(this)) > fee, "Not enough LINK - fill contract with faucet");
-        return requestRandomness(keyHash, fee, userProvidedSeed);
+    function getRandomNumberPrivate() public returns (bytes32 requestId) {
+        require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK");
+        return requestRandomness(keyHash, fee);
     }
 
     /**
