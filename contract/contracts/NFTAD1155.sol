@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -10,6 +10,10 @@ contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
     bytes32 public keyHash = 0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc;
     uint256 public fee = 0.3 * 10**18; // 0.1 LINK
     uint256 public randomResult;
+
+        // ** New mapping to store requests
+    mapping(bytes32 => address) public requestIdToAddress;
+    mapping(address => uint) public random;
 
     // Contract name
     string public name;
@@ -65,19 +69,19 @@ contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
         emit Minted(msg.sender, account, id, amount);
     }
 
-    function getRandomNumberPrivate() public returns (bytes32 requestId) {
-        require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK");
-        return requestRandomness(keyHash, fee);
+  function getRandomNumber() public {
+        require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
+        // ** Store the random request in requestID
+        bytes32 requestId = requestRandomness(keyHash, fee);
+        // ** Map requestId to the sender's address
+        requestIdToAddress[requestId] = msg.sender;
     }
 
-    /**
-     * Callback function used by VRF Coordinator
-     */
-    function fulfillRandomness(bytes32 requestId, uint256 randomness)
-        internal
-        override
-    {
-        randomResult = randomness;
+    function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
+        // ** Find the sender address based on the request
+        address _sender = requestIdToAddress[requestId];
+        // ** Update sender's mapping for randomness
+        random[_sender] = randomness;
     }
 
     function mintToMany(
@@ -132,8 +136,8 @@ contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
         return uri;
     }
 
-    function getRandomResult()  public view returns (uint256) {
-        return randomResult;
+    function getRandomResult(address addr)  public view returns (uint256) {
+        return random[addr];
     }
 
     /**
