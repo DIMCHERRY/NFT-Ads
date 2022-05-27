@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 
-contract NFTAD1155 is ERC1155, Ownable{
+contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
 
     bytes32 internal keyHash;
     uint256 internal fee;
@@ -21,7 +21,6 @@ contract NFTAD1155 is ERC1155, Ownable{
     mapping(address => uint256) public addressRandomHash;
 
     event Minted(address minter, address receiver, uint256 id, uint256 amount);
-
 
     constructor(string memory name_, string memory uri_)
         ERC1155(uri_)
