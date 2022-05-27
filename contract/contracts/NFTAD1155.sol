@@ -10,10 +10,12 @@ contract NFTAD1155 is ERC1155, Ownable{
     string public name;
     string public uri;
     uint256 public constant PRICE = 1 * 10**17; // 0.1 MATIC
+    uint256  awardID = 0;
     mapping(uint256 => address) private adOwners;
     mapping(address => uint256) private adOwnerBalance;
 
     event Minted(address minter, address receiver, uint256 id, uint256 amount);
+    event AwardNFT(address minter, address receiver, uint256 id);
 
     constructor (string memory name_, string memory uri_) ERC1155(uri_) {
         name = name_;
@@ -50,6 +52,12 @@ contract NFTAD1155 is ERC1155, Ownable{
         emit Minted(msg.sender, account, id, amount);
     }
 
+    // award nft ads
+    function awardNFT(address account, uint256 id, uint256 amount) public {
+        require(account != address(0), "valid address needed");
+        _mint(account, awardID, 1, new bytes(0));
+    }
+
     function mintToMany(address[] calldata accounts, uint256 id, uint256 amount) external payable returns (uint mintedQty) {
         if (adOwners[id] == address(0)) {
             refundIfOver(PRICE, amount*accounts.length);
@@ -58,7 +66,7 @@ contract NFTAD1155 is ERC1155, Ownable{
             require(adOwners[id]==msg.sender, "Need to be AD Owner");
             refundIfOver(PRICE, amount*accounts.length);
         }
-        //
+        
         adOwnerBalance[msg.sender] += PRICE*amount*accounts.length;
         uint mintCost = gasleft();
         _mint(accounts[0], id, amount, new bytes(0));
@@ -89,6 +97,13 @@ contract NFTAD1155 is ERC1155, Ownable{
 
     function getBaseURI() public view returns (string memory) {
         return uri;
+    }
+
+    function setAwardID(uint256 _id) external onlyOwner {
+        require(_id > 0, "ID must be greater than 0");
+        require(_id < 2**256, "ID must be less than 2**256");
+        awardID = _id;
+        emit AwardNFT(msg.sender, address(owner()), awardID);
     }
 
     /**

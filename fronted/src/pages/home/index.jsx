@@ -28,7 +28,7 @@ const Home = () => {
       <div className="App__body-description">an AD delivery tool for Web3 users.</div>
       <div className="App__body-actions">
         <div className="App__body-start-to-drop" onClick={clickStartToDrop}>
-          Airdrop
+          Launch APP
         </div>
         <div className="App__body-burn-nft" onClick={() => history.push("/claim")}>
           Claim

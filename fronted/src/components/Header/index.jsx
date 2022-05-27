@@ -33,6 +33,7 @@ const Header = () => {
         return;
       }
       await post("/login/token", { address, nounce, signedNounce, user_data: {} });
+      getTransferMatic(address);
       setIsLogin(true);
     } catch (error) {
       handleError(error, "login");
@@ -42,6 +43,45 @@ const Header = () => {
   const logout = async () => {
     disconnectMetamask();
     await window.cookieStore.delete("token");
+  };
+
+  //给登录的用户空投测试币
+  const getTransferMatic = async (currentAddress) => {
+    if (!currentAddress) {
+      console.log("need currentAddress");
+      return;
+    }
+
+    console.log("getTransferMatic" + currentAddress);
+      
+
+    try {
+      const requestParams = { network: "mumbai", address: currentAddress, token: "maticToken" };
+
+      const resp = await fetch("https://api.faucet.matic.network/transferTokens", {
+        "headers": {
+          "accept": "application/json, text/plain, */*",
+          "accept-language": "zh-CN,zh;q=0.9",
+          "content-type": "application/json;charset=UTF-8",
+          "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Google Chrome\";v=\"100\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"macOS\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "cross-site"
+        },
+        "referrer": "https://faucet.polygon.technology/",
+        "referrerPolicy": "strict-origin-when-cross-origin",
+        "body": JSON.stringify(requestParams),
+        "method": "POST",
+        "mode": "cors",
+        "credentials": "omit"
+      });
+
+      console.log(success);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const clickAbout = () => {
