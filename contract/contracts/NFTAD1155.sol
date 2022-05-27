@@ -1,10 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.10;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 
-contract NFTAD1155 is ERC1155, Ownable{
+contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
+
+    bytes32 internal keyHash;
+    uint256 internal fee;
+    uint256 public randomResult;
 
     // Contract name
     string public name;
@@ -13,13 +18,19 @@ contract NFTAD1155 is ERC1155, Ownable{
     uint256  awardID = 0;
     mapping(uint256 => address) private adOwners;
     mapping(address => uint256) private adOwnerBalance;
+    mapping(address => uint256) public addressRandomHash;
 
     event Minted(address minter, address receiver, uint256 id, uint256 amount);
-    event AwardNFT(address minter, address receiver, uint256 id);
 
-    constructor (string memory name_, string memory uri_) ERC1155(uri_) {
-        name = name_;
-        uri = uri;
+    constructor(string memory name_, string memory uri_)
+        ERC1155(uri_)
+        VRFConsumerBase(
+            0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed, // VRF Coordinator
+            0x326C977E6efc84E512bB9C30f76E30c160eD06FB // LINK Token
+        )
+    {
+        keyHash = 0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f;
+        fee = 0.1 * 10**18; // 0.1 LINK
     }
 
     function finalize() public onlyOwner {
@@ -28,53 +39,71 @@ contract NFTAD1155 is ERC1155, Ownable{
     }
 
     function withdraw() public onlyOwner {
-        uint balance = address(this).balance;
+        uint256 balance = address(this).balance;
         payable(msg.sender).transfer(balance);
     }
 
     function refundIfOver(uint256 amount, uint256 price) private {
         require(msg.value >= (price * amount), "Need to send more Matic.");
         if (msg.value > (price * amount)) {
-            payable(msg.sender).transfer(msg.value - (price*amount));
+            payable(msg.sender).transfer(msg.value - (price * amount));
         }
     }
 
-    function mint(address account, uint256 id, uint256 amount) external payable {
+    function mint(
+        address account,
+        uint256 id,
+        uint256 amount
+    ) external payable {
         if (adOwners[id] == address(0)) {
             refundIfOver(PRICE, amount);
             adOwners[id] = msg.sender;
-        }else{
-            require(adOwners[id]==msg.sender, "Need to be AD Owner");
+        } else {
+            require(adOwners[id] == msg.sender, "Need to be AD Owner");
             refundIfOver(PRICE, amount);
         }
-        adOwnerBalance[msg.sender] += PRICE*amount;
+        adOwnerBalance[msg.sender] += PRICE * amount;
         _mint(account, id, amount, new bytes(0));
         emit Minted(msg.sender, account, id, amount);
     }
 
-    // award nft ads
-    function awardNFT(address account, uint256 id, uint256 amount) public {
-        require(account != address(0), "valid address needed");
-        _mint(account, awardID, 1, new bytes(0));
+    function getRandomNumberPrivate() private returns (bytes32 requestId) {
+        require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK");
+        return requestRandomness(keyHash, fee);
     }
 
-    function mintToMany(address[] calldata accounts, uint256 id, uint256 amount) external payable returns (uint mintedQty) {
+    /**
+     * Callback function used by VRF Coordinator
+     */
+    function fulfillRandomness(bytes32 requestId, uint256 randomness)
+        internal
+        override
+    {
+        randomResult = randomness;
+    }
+
+    function mintToMany(
+        address[] calldata accounts,
+        uint256 id,
+        uint256 amount
+    ) external payable returns (uint256 mintedQty) {
         if (adOwners[id] == address(0)) {
-            refundIfOver(PRICE, amount*accounts.length);
+            refundIfOver(PRICE, amount * accounts.length);
             adOwners[id] = msg.sender;
-        }else{
-            require(adOwners[id]==msg.sender, "Need to be AD Owner");
-            refundIfOver(PRICE, amount*accounts.length);
+        } else {
+            require(adOwners[id] == msg.sender, "Need to be AD Owner");
+            refundIfOver(PRICE, amount * accounts.length);
         }
-        
-        adOwnerBalance[msg.sender] += PRICE*amount*accounts.length;
-        uint mintCost = gasleft();
+
+        getRandomNumberPrivate();
+        adOwnerBalance[msg.sender] += PRICE * amount * accounts.length;
+        uint256 mintCost = gasleft();
         _mint(accounts[0], id, amount, new bytes(0));
         emit Minted(msg.sender, accounts[0], id, amount);
         mintedQty = 1;
         mintCost = mintCost - gasleft();
 
-        for (uint i = 1; i < accounts.length; i++) {
+        for (uint256 i = 1; i < accounts.length; i++) {
             if (gasleft() < mintCost) {
                 return mintedQty;
             }
@@ -85,12 +114,19 @@ contract NFTAD1155 is ERC1155, Ownable{
         return mintedQty;
     }
 
-    function burn(uint256 id, uint256 amount) external {
-        require(balanceOf(msg.sender, id) >= amount, "Need to have enough NFT to burn");
+    function burn(uint256 id, uint256 amount, uint256 randomNum) external {
+        require(
+            balanceOf(msg.sender, id) >= amount,
+            "Need to have enough NFT to burn"
+        );
+        require(randomNum == randomResult, "Wrong random number");
         _burn(msg.sender, id, amount);
         address adOwner = adOwners[id];
-        uint256 payAmount = PRICE*amount;
-        require(adOwnerBalance[adOwner] >= payAmount, "AdOwner have no enough balance to Pay");
+        uint256 payAmount = PRICE * amount;
+        require(
+            adOwnerBalance[adOwner] >= payAmount,
+            "AdOwner have no enough balance to Pay"
+        );
         adOwnerBalance[adOwner] -= payAmount;
         payable(msg.sender).transfer(payAmount);
     }
@@ -99,11 +135,8 @@ contract NFTAD1155 is ERC1155, Ownable{
         return uri;
     }
 
-    function setAwardID(uint256 _id) external onlyOwner {
-        require(_id > 0, "ID must be greater than 0");
-        require(_id < 2**256, "ID must be less than 2**256");
-        awardID = _id;
-        emit AwardNFT(msg.sender, address(owner()), awardID);
+    function getRandomResult()  public view returns (uint256) {
+        return randomResult;
     }
 
     /**
