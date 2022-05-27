@@ -32,6 +32,7 @@
     "ts-node": "^10.4.0"
   },
   "dependencies": {
+    "@chainlink/contracts": "^0.4.1",
     "@maticnetwork/pos-portal": "^1.5.2",
     "dotenv": "^10.0.0",
     "ethereum-waffle": "^3.4.0",

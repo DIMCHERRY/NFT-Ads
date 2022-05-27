@@ -7,6 +7,10 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 
 contract NFTAD1155 is ERC1155, Ownable{
 
+    bytes32 internal keyHash;
+    uint256 internal fee;
+    uint256 public randomResult;
+
     // Contract name
     string public name;
     string public uri;
