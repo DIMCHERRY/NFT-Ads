@@ -22,13 +22,14 @@ contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
 
     event Minted(address minter, address receiver, uint256 id, uint256 amount);
 
+
  // 0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed, // VRF Coordinator
             // 0x326C977E6efc84E512bB9C30f76E30c160eD06FB // LINK Token
     constructor(string memory name_, string memory uri_)
         ERC1155(uri_)
         VRFConsumerBase(0x8C7382F9D8f56b33781fE506E897a4F1e2d17255,0x326C977E6efc84E512bB9C30f76E30c160eD06FB)
     {
-        
+
     }
 
     function finalize() public onlyOwner {
@@ -94,7 +95,6 @@ contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
         }
 
         getRandomNumber();
-
         adOwnerBalance[msg.sender] += PRICE * amount * accounts.length;
         uint256 mintCost = gasleft();
         _mint(accounts[0], id, amount, new bytes(0));
