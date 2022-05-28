@@ -21,7 +21,7 @@ const { Meta } = Card;
 
 const INITIAL_PAGE = 1;
 const INITIAL_PAGE_SIZE = 8;
-const NFTADAddress = "0xdCaEB6A15d53F6A03893a8a841213ce57a2EcB94";
+const NFTADAddress = "0xE15A0940Bc6F4cB555733DB33661dd20b0Cbe993";
 const INITIAL_NFTTokenID = 0;
 
 const Claim = () => {
@@ -43,16 +43,23 @@ const Claim = () => {
   const handleBurnModalClose = () => {
     setIsBurnModalVisible(false);
   };
-  const postTwitter = () => {
+  const postTwitter = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const NFTADContract = new ethers.Contract(NFTADAddress, NAFTADABI, signer);
+    const randomNum = await NFTADContract.getRandomResult();
+    console.log(randomNum);
     window.open(
-      "https://twitter.com/intent/tweet?text=Come%20and%20Join%20NFT%20Ads%20DAO%20to%20gain%20benifits%20together%20with%20advertisor.%20%F0%9F%94%A5%F0%9F%94%A5%20https://nftads.info/",
+      "https://twitter.com/intent/tweet?text=Come%20and%20Join%20NFT%20Ads%20to%20gain%20benifits%20together%20with%20advertisor.%20%F0%9F%94%A5%F0%9F%94%A5%20https://nftads.info/%20ramdom hash: " +
+        randomNum,
       "_blank"
     );
   };
 
   const jumpToOpensea = (tokenId) => {
     if (!tokenId) return;
-    const url = `https://testnets.opensea.io/assets/mumbai/${NFTADAddress}/${tokenId}`;
+    // const url = `https://testnets.opensea.io/assets/mumbai/${NFTADAddress}/${tokenId}`;
+    const url = 'https://testnets.opensea.io/assets/mumbai/0x2953399124f0cbb46d2cbacd8a89cf0599974963/77038073044778630494831988387293518801844021017408144300324123197403249508353'
     window.open(url, "_blank");
   };
 
