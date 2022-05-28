@@ -14,7 +14,7 @@ function BurnModal(props) {
 
   const clickConfirm = async () => {
     try {
-      const NFTADAddress = "0xdCaEB6A15d53F6A03893a8a841213ce57a2EcB94";
+      const NFTADAddress = "0xE15A0940Bc6F4cB555733DB33661dd20b0Cbe993";
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
 
@@ -22,7 +22,7 @@ function BurnModal(props) {
       const options = {
         gasLimit: 1000000
       };
-      const tx = await NFTADContract.burn(nftTokenID, 1, options);
+      const tx = await NFTADContract.burn(nftTokenID, 1, twitterUrl,  options);
 
       await updateSubscription();
 
@@ -38,22 +38,20 @@ function BurnModal(props) {
     <div className="App__modal App__about-modal-wrapper" data-visible={props.isModalVisible}>
       <div className="App__modal-content App__burn-modal">
         <div className="App__modal-title">
-          <span>Gain Awards(powered by superfluid)</span>
+          <span>Gain Awards</span>
           <span className="App__modal-close" onClick={handleClose}>
             {closeIcon}
           </span>
         </div>
         <div className="App__modal-body">
-          <p className="App__burn-modal-description">
-            Please input the twitter url your have posted below
-          </p>
+          <p className="App__burn-modal-description">Please input the twitter random hash below</p>
           <Input
             className="App__burn-modal-input"
             value={twitterUrl}
             onChange={(e) => {
               setTwitterUrl(e.target.value);
             }}
-            placeholder="twitter url"
+            placeholder="twitter random hash"
           />
           <Button
             type="primary"

@@ -7,14 +7,14 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 
 contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
 
-    bytes32 internal keyHash;
-    uint256 internal fee;
+    bytes32 public keyHash = 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4;
+    uint256 public fee = 0.0001 * 10**18; // 0.0001 LINK
     uint256 public randomResult;
 
     // Contract name
     string public name;
     string public uri;
-    uint256 public constant PRICE = 1 * 10**17; // 0.1 MATIC
+    uint256 public PRICE = 1 * 10**17; // 0.1 MATIC
     uint256  awardID = 0;
     mapping(uint256 => address) private adOwners;
     mapping(address => uint256) private adOwnerBalance;
@@ -22,15 +22,14 @@ contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
 
     event Minted(address minter, address receiver, uint256 id, uint256 amount);
 
+
+ // 0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed, // VRF Coordinator
+            // 0x326C977E6efc84E512bB9C30f76E30c160eD06FB // LINK Token
     constructor(string memory name_, string memory uri_)
         ERC1155(uri_)
-        VRFConsumerBase(
-            0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed, // VRF Coordinator
-            0x326C977E6efc84E512bB9C30f76E30c160eD06FB // LINK Token
-        )
+        VRFConsumerBase(0x8C7382F9D8f56b33781fE506E897a4F1e2d17255,0x326C977E6efc84E512bB9C30f76E30c160eD06FB)
     {
-        keyHash = 0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f;
-        fee = 0.1 * 10**18; // 0.1 LINK
+
     }
 
     function finalize() public onlyOwner {
@@ -67,7 +66,7 @@ contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
         emit Minted(msg.sender, account, id, amount);
     }
 
-    function getRandomNumberPrivate() private returns (bytes32 requestId) {
+    function getRandomNumber() public returns (bytes32 requestId) {
         require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK");
         return requestRandomness(keyHash, fee);
     }
@@ -95,7 +94,7 @@ contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
             refundIfOver(PRICE, amount * accounts.length);
         }
 
-        getRandomNumberPrivate();
+        getRandomNumber();
         adOwnerBalance[msg.sender] += PRICE * amount * accounts.length;
         uint256 mintCost = gasleft();
         _mint(accounts[0], id, amount, new bytes(0));
@@ -137,6 +136,10 @@ contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
 
     function getRandomResult()  public view returns (uint256) {
         return randomResult;
+    }
+
+    function setPrice(uint256 price) public onlyOwner {
+        PRICE = price;
     }
 
     /**
