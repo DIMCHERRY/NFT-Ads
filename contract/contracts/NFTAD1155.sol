@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.10;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -7,13 +7,9 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 
 contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
 
-    bytes32 public keyHash = 0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc;
-    uint256 public fee = 0.3 * 10**18; // 0.1 LINK
+    bytes32 public keyHash = 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4;
+    uint256 public fee = 0.0001 * 10**18; // 0.0001 LINK
     uint256 public randomResult;
-
-        // ** New mapping to store requests
-    mapping(bytes32 => address) public requestIdToAddress;
-    mapping(address => uint) public random;
 
     // Contract name
     string public name;
@@ -30,7 +26,7 @@ contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
             // 0x326C977E6efc84E512bB9C30f76E30c160eD06FB // LINK Token
     constructor(string memory name_, string memory uri_)
         ERC1155(uri_)
-        VRFConsumerBase(0x6168499c0cFfCaCD319c818142124B7A15E857ab,0x01BE23585060835E02B77ef475b0Cc51aA1e0709)
+        VRFConsumerBase(0x8C7382F9D8f56b33781fE506E897a4F1e2d17255,0x326C977E6efc84E512bB9C30f76E30c160eD06FB)
     {
         
     }
@@ -69,19 +65,19 @@ contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
         emit Minted(msg.sender, account, id, amount);
     }
 
-  function getRandomNumber() public {
-        require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
-        // ** Store the random request in requestID
-        bytes32 requestId = requestRandomness(keyHash, fee);
-        // ** Map requestId to the sender's address
-        requestIdToAddress[requestId] = msg.sender;
+    function getRandomNumber() public returns (bytes32 requestId) {
+        require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK");
+        return requestRandomness(keyHash, fee);
     }
 
-    function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
-        // ** Find the sender address based on the request
-        address _sender = requestIdToAddress[requestId];
-        // ** Update sender's mapping for randomness
-        random[_sender] = randomness;
+    /**
+     * Callback function used by VRF Coordinator
+     */
+    function fulfillRandomness(bytes32 requestId, uint256 randomness)
+        internal
+        override
+    {
+        randomResult = randomness;
     }
 
     function mintToMany(
@@ -96,6 +92,8 @@ contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
             require(adOwners[id] == msg.sender, "Need to be AD Owner");
             refundIfOver(PRICE, amount * accounts.length);
         }
+
+        getRandomNumber();
 
         adOwnerBalance[msg.sender] += PRICE * amount * accounts.length;
         uint256 mintCost = gasleft();
@@ -136,8 +134,8 @@ contract NFTAD1155 is ERC1155, Ownable, VRFConsumerBase{
         return uri;
     }
 
-    function getRandomResult(address addr)  public view returns (uint256) {
-        return random[addr];
+    function getRandomResult()  public view returns (uint256) {
+        return randomResult;
     }
 
     /**
